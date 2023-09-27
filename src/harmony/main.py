@@ -13,7 +13,7 @@ if __name__ == "__main__":
     # parser.add_argument("file", help="resume file to parse")
     args = parser.parse_args()
 
-    args.file = "tests/resources/resume.md"
+    args.file = "./tests/resources/resume.md"
     raw = parse_file(args.file)
     resume = Resume(raw=raw)
     print(resume)
