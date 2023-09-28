@@ -11,6 +11,7 @@ python = "^3.10"
 openai = "^0.28.1"
 dacite = "^1.8.1"
 python-dotenv = "^1.0.0"
+pyaml = "^23.9.6"
 
 
 [tool.poetry.group.dev.dependencies]
