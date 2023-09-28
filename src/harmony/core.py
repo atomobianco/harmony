@@ -45,3 +45,10 @@ class Resume:
             from_dict(data_class=Position, data=p) for p in resume["positions"]
         ]
         self.positions = positions
+
+
+@dataclass
+class Offer:
+    """An offer of a job position."""
+
+    raw: str  # raw text of the offer, e.g. "DevOps Engineer\nAs a DevOps Engineer, you will:\n..."
