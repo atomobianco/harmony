@@ -9,6 +9,11 @@ import pyaml
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# TODO = reduce hallucinations
+#  - https://www.youtube.com/watch?v=1yOxOo84yqU
+#  - > 3.5 is very bad at negative prompts, like “we don’t have x” or “do NOT return an answer if you’re unsure” … you have to phrase things in positive instructions. Gpt-4 is much, much better at handling negatives (OpenAI calls this out on their model card).
+#    https://community.openai.com/t/building-hallucination-resistant-prompts/131036/26?page=2
+
 system_message = "You are a recruiter. You have a resume and want to parse it."
 system_message = (
     "You are a recruiter. Your role is to take a resume detailed by tripel back  ticks and return a "
