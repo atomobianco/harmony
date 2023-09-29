@@ -16,8 +16,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 system_message = "You are a recruiter. You have a resume and want to parse it."
 system_message = (
-    "You are a recruiter. Your role is to take a resume detailed by tripel back  ticks and return a "
-    "structured response as defined by the functions detailed"
+    "You are a recruiter. Your role is to take a resume detailed by triple back ticks and return a "
+    "structured response as defined by the functions detailed."
 )
 
 parse_summary_function = {

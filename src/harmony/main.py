@@ -21,7 +21,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # args.resume = "./tests/resources/resume.md"
-    args.resume = "./tests/resources/dumb.md"
+    args.resume = "/mnt/TARANIS/myCV/resume.md"
     raw_resume = parse_file(args.resume)
     resume = Resume(raw=raw_resume)
     logging.info(f"output:\n{pyaml.dump(resume)}")
