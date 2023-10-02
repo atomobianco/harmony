@@ -1,41 +1,42 @@
-from harmony.core import *
+from harmony.core import Position, Resume
 
+position_1 = Position(
+    role="Software Engineer",
+    company="Google",
+    start="2019",
+    end="2020",
+    location="Paris, France",
+    tasks=["Develop code"],
+)
 
-def test_position():
-    position = Position(
-        title="Software Engineer",
-        start="2019-01-01",
-        end="2020-01-01",
-        location="Paris, France",
-        tasks=[Task(description="Develop marketing strategies")],
-    )
-    assert position.title == "Software Engineer"
-    assert position.start == "2019-01-01"
-    assert position.end == "2020-01-01"
-    assert position.location == "Paris, France"
-    assert len(position.tasks) == 1
+position_2 = Position(
+    role="Software Manager",
+    company="Google",
+    start="2020",
+    end="2021",
+    location="Paris, France",
+    tasks=["Develop code", "Manage engineers"],
+)
 
 
 def test_position_str():
-    position = Position(
-        title="Software Engineer",
-        start="2019-01-01",
-        end="2020-01-01",
-        location="Paris, France",
-        tasks=[Task(description="Develop marketing strategies")],
+    position_str = str(position_1)
+    expected = (
+        "### Software Engineer, Google\n\n2019 - 2020, Paris, France\n\n- Develop code"
     )
-    assert str(position) == "Software Engineer (2019-01-01 - 2020-01-01)"
+    assert position_str == expected
 
 
-def test_position_repr():
-    position = Position(
-        title="Software Engineer",
-        start="2019-01-01",
-        end="2020-01-01",
-        location="Paris, France",
-        tasks=[Task(description="Develop marketing strategies")],
+def test_resume_str():
+    resume = Resume(summary="The summary", positions=[position_1, position_2])
+    resume_str = str(resume)
+    expected = (
+        "## Summary\n\nThe summary\n\n"
+        "## Experience\n\n"
+        "### Software Engineer, Google\n\n2019 - 2020, Paris, France\n\n"
+        "- Develop code\n\n"
+        "### Software Manager, Google\n\n2020 - 2021, Paris, France\n\n"
+        "- Develop code\n"
+        "- Manage engineers"
     )
-    assert (
-        repr(position)
-        == "Position(title=Software Engineer, start=2019-01-01, end=2020-01-01, location=Paris, France, tasks=[1])"
-    )
+    assert resume_str == expected

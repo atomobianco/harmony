@@ -3,11 +3,14 @@ from dotenv import load_dotenv
 import logging
 import openai
 import os
-import pyaml
-
+from dacite import from_dict
+from harmony.utils import num_tokens_from_messages, calculate_cost
+from harmony.core import Position, Resume
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+model_name = "gpt-3.5-turbo-16k"
 
 # TODO = reduce hallucinations
 #  - https://www.youtube.com/watch?v=1yOxOo84yqU
@@ -46,33 +49,32 @@ parse_positions_function = {
                 "items": {
                     "type": "object",
                     "properties": {
-                        "title": {
+                        "role": {
                             "type": "string",
-                            "description": "The title of the position",
+                            "description": "The role of the position (e.g. Software Engineer)",
+                        },
+                        "company": {
+                            "type": "string",
+                            "description": "The company of position (e.g. Google)",
                         },
                         "start": {
                             "type": "string",
-                            "description": "The start date of position (2023 if not a date)",
+                            "description": "The start date of position",
                         },
                         "end": {
                             "type": "string",
-                            "description": "The end date of position (2023 if not a date)",
+                            "description": "The end date of position",
                         },
                         "location": {
                             "type": "string",
-                            "description": "The location of the position",
+                            "description": "The location of position",
                         },
                         "tasks": {
                             "type": "array",
                             "description": "The responsibilities or accomplishments of position",
                             "items": {
-                                "type": "object",
-                                "properties": {
-                                    "description": {
-                                        "type": "string",
-                                        "description": "The description of the task",
-                                    }
-                                },
+                                "type": "string",
+                                "description": "A responsibility or accomplishment of position",
                             },
                         },
                     },
@@ -104,19 +106,28 @@ parse_resume_function = {
 }
 
 
-def positions_parser(raw: str) -> list[dict]:
+def positions_parser(raw: str) -> list[Position]:
     """Parse a resume and return a list of positions."""
     messages = [
         {"role": "system", "content": system_message},
         {"role": "user", "content": f"```{raw}```"},
     ]
+    logging.info(f"Tokens messages: {num_tokens_from_messages(messages, model_name)}")
     functions = [parse_positions_function]
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model=model_name,
         messages=messages,
         functions=functions,
         function_call="auto",
     )
+    logging.info(
+        f"Tokens usage: "
+        f"{response.usage.prompt_tokens} (prompt), "
+        f"{response.usage.completion_tokens} (completion), "
+        f"{response.usage.total_tokens} (total)"
+    )
+    logging.info(f"Total cost: {calculate_cost(response.usage)}")
+
     response_message = response["choices"][0]["message"]
     if response_message.get("function_call"):
         function_args = json.loads(response_message["function_call"]["arguments"])
@@ -124,23 +135,34 @@ def positions_parser(raw: str) -> list[dict]:
         result = positions
     else:
         result = []
-    logging.info(f"positions:\n{pyaml.dump(result)}")
-    return result
+    positions = [from_dict(data_class=Position, data=p) for p in result]
+    return positions
 
 
-def resume_parser(raw: str) -> dict:
+def resume_parser(raw: str) -> Resume:
     """Parse a resume and return structured data."""
     messages = [
         {"role": "system", "content": system_message},
         {"role": "user", "content": f"```{raw}```"},
     ]
+    logging.info(
+        f"Tokens used by messages: {num_tokens_from_messages(messages, model_name)}"
+    )
     functions = [parse_resume_function]
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model=model_name,
         messages=messages,
         functions=functions,
         function_call="auto",
     )
+    logging.info(
+        f"Tokens usage: "
+        f"{response.usage.prompt_tokens} (prompt), "
+        f"{response.usage.completion_tokens} (completion), "
+        f"{response.usage.total_tokens} (total)"
+    )
+    logging.info(f"Total cost: {calculate_cost(response.usage)}")
+
     response_message = response["choices"][0]["message"]
     if response_message.get("function_call"):
         function_args = json.loads(response_message["function_call"]["arguments"])
@@ -148,5 +170,6 @@ def resume_parser(raw: str) -> dict:
         result = resume
     else:
         result = {}
-    logging.info(f"resume:\n{pyaml.dump(result)}")
-    return result
+    summary = result["summary"]
+    positions = [from_dict(data_class=Position, data=p) for p in resume["positions"]]
+    return Resume(raw=raw, summary=summary, positions=positions)
