@@ -17,8 +17,6 @@ model_name = "gpt-3.5-turbo-16k-0613"
 #  - > 3.5 is very bad at negative prompts, like “we don’t have x” or “do NOT return an answer if you’re unsure” … you have to phrase things in positive instructions. Gpt-4 is much, much better at handling negatives (OpenAI calls this out on their model card).
 #    https://community.openai.com/t/building-hallucination-resistant-prompts/131036/26?page=2
 
-system_message = "Return a structured response as defined by the functions detailed."
-
 parse_summary_function = {
     "name": "parse_summary",
     "description": "Get the candidate's summary from a resume",
@@ -121,7 +119,6 @@ parse_resume_function = {
 def positions_parser(raw: str) -> list[Position]:
     """Parse a resume and return a list of positions."""
     messages = [
-        {"role": "system", "content": system_message},
         {"role": "user", "content": f"```{raw}```"},
     ]
     logging.info(f"Tokens messages: {num_tokens_from_messages(messages, model_name)}")
@@ -143,18 +140,15 @@ def positions_parser(raw: str) -> list[Position]:
     response_message = response["choices"][0]["message"]
     if response_message.get("function_call"):
         function_args = json.loads(response_message["function_call"]["arguments"])
-        positions = function_args.get("positions")
-        result = positions
+        positions = function_args.get("positions", [])
     else:
-        result = []
-    positions = [from_dict(data_class=Position, data=p) for p in result]
-    return positions
+        positions = []
+    return [from_dict(data_class=Position, data=p) for p in positions]
 
 
 def resume_parser(raw: str) -> Resume:
     """Parse a resume and return structured data."""
     messages = [
-        {"role": "system", "content": system_message},
         {"role": "user", "content": f"```{raw}```"},
     ]
     logging.info(
@@ -177,11 +171,17 @@ def resume_parser(raw: str) -> Resume:
 
     response_message = response["choices"][0]["message"]
     if response_message.get("function_call"):
-        function_args = json.loads(response_message["function_call"]["arguments"])
-        resume = function_args.get("resume")
-        result = resume
+        try:
+            function_args = json.loads(response_message["function_call"]["arguments"])
+        except json.decoder.JSONDecodeError:
+            logging.error(f"Error parsing function call: {response_message}")
+            raise
+        else:
+            resume = function_args.get("resume", {})
     else:
-        result = {}
-    summary = result["summary"]
-    positions = [from_dict(data_class=Position, data=p) for p in resume["positions"]]
+        resume = {}
+    summary = resume.get("summary", "")
+    positions = [
+        from_dict(data_class=Position, data=p) for p in resume.get("positions")
+    ]
     return Resume(raw=raw, summary=summary, positions=positions)

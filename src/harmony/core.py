@@ -22,8 +22,8 @@ class Position:
 
     def __str__(self) -> str:
         tasks_str = "\n".join([f"- {task}" for task in self.tasks])
-        skills_str = ", ".join([f"- {skill}" for skill in self.skills])
-        tools_str = ", ".join([f"- {tool}" for tool in self.tools])
+        skills_str = ", ".join([f"{skill}" for skill in self.skills])
+        tools_str = ", ".join([f"{tool}" for tool in self.tools])
         position_str = (
             f"### {self.job_title}, {self.company_name}\n\n"
             f"{self.start_date} - {self.end_date}, {self.company_location}\n\n"
