@@ -1,19 +1,24 @@
-from harmony.core import Resume
+from harmony.core import Resume, Position
 import openai
 from dotenv import load_dotenv
 import os
 import logging
 from harmony.utils import num_tokens_from_messages, calculate_cost
+from pkg_resources import resource_stream
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-model_name = "gpt-3.5-turbo-16k"
+default_model = "gpt-4-0613"
 
 system_message = (
     "Ignore all previous instructions. "
     "From this point forward, you are a professional recruiter with years of experience analysing and improving "
     "Curriculum Vitae (CV) and resumes."
+)
+
+position_system_message = (
+    resource_stream(__name__, "data/position_system_message.md").read().decode("utf-8")
 )
 
 intro_position_message = (
@@ -65,8 +70,8 @@ outro_resume_message = (
 )
 
 
-def resume_formatter(resume: Resume) -> str:
-    """Parse a resume and return a list of positions."""
+def resume_formatter(resume: Resume, model: str = default_model) -> str:
+    """Format a resume."""
     resume_str = str(resume)
     messages = [
         {"role": "system", "content": system_message},
@@ -75,9 +80,11 @@ def resume_formatter(resume: Resume) -> str:
             "content": f"{intro_resume_message}\n\n```{resume_str}```\n\n{outro_resume_message}",
         },
     ]
-    logging.info(f"Tokens messages: {num_tokens_from_messages(messages, model_name)}")
+    logging.info(
+        f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
+    )
     response = openai.ChatCompletion.create(
-        model=model_name,
+        model=model,
         messages=messages,
     )
     logging.info(
@@ -89,4 +96,50 @@ def resume_formatter(resume: Resume) -> str:
     logging.info(f"Total cost: {calculate_cost(response.usage)}")
 
     response_message = response["choices"][0]["message"]
-    return response_message
+    if response_message.get("assistant"):
+        result = response_message["assistant"]["content"]
+    else:
+        result = ""
+    return result
+
+
+def position_formatter(position: Position, model: str = default_model) -> str:
+    """Format a position."""
+    position_str = str(position)
+    messages = [
+        {"role": "system", "content": position_system_message},
+        {"role": "user", "content": position_str},
+    ]
+    logging.info(
+        f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
+    )
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=messages,
+        temperature=0.2,
+        # Set the temperature to a lower value, such as 0.2, to make the output more deterministic and focused.
+        # This will help ensure that the generated text is concise and less prone to randomness.
+        top_p=0.8,
+        # Use a moderate value for Top P, such as 0.8. This will allow the model to select from a reasonably broad
+        # range of tokens while still maintaining control over the generated text.
+        frequency_penalty=0.5,
+        # Increase the frequency penalty to discourage the repetition of words or phrases. A value around 0.5 or
+        # higher can help reduce redundancy in the generated content.
+        presence_penalty=0.5,
+        # Similarly, you can increase the presence penalty to discourage the inclusion of similar words or phrases.
+        # A value around 0.5 or higher can encourage the model to provide more varied rephrasings.
+    )
+    logging.info(
+        f"Tokens usage: "
+        f"{response.usage.prompt_tokens} (prompt), "
+        f"{response.usage.completion_tokens} (completion), "
+        f"{response.usage.total_tokens} (total)"
+    )
+    logging.info(f"Total cost: {calculate_cost(response.usage)}")
+
+    response_message = response["choices"][0]["message"]
+    if response_message.get("role") == "assistant":
+        result = response_message.get("content")
+    else:
+        result = ""
+    return result

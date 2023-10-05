@@ -14,7 +14,7 @@ Highly skilled software engineer with 5 years of experience in full-stack web de
 
 ### Senior Software Engineer, XYZ Tech
 
-_2019 - Present_
+2019 - Present
 
 - Led a team of 5 developers in the successful development and deployment of a large-scale e-commerce platform.
 - Designed and implemented RESTful APIs to integrate external systems and improve overall system performance.
@@ -22,7 +22,7 @@ _2019 - Present_
 
 ### Software Engineer, ABC Solutions
 
-_2016 - 2019_
+2016 - 2019
 
 - Developed and maintained web applications using HTML, CSS, JavaScript, and AngularJS.
 - Implemented unit tests and conducted code reviews to ensure software quality and maintainability.

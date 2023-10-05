@@ -1,6 +1,12 @@
 import tiktoken
 
 
+def parse_file(file_name):
+    """Parse file and return a string"""
+    with open(file_name, "r") as f:
+        return f.read()
+
+
 def calculate_cost(usage, model="gpt-3.5-turbo-16k"):
     pricing = {
         "gpt-3.5-turbo-4k": {

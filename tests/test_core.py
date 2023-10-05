@@ -1,20 +1,20 @@
 from harmony.core import Position, Resume
 
 position_1 = Position(
-    role="Software Engineer",
-    company="Google",
-    start="2019",
-    end="2020",
-    location="Paris, France",
+    job_title="Software Engineer",
+    company_name="Google",
+    start_date="2019",
+    end_date="2020",
+    company_location="Paris, France",
     tasks=["Develop code"],
 )
 
 position_2 = Position(
-    role="Software Manager",
-    company="Google",
-    start="2020",
-    end="2021",
-    location="Paris, France",
+    job_title="Software Manager",
+    company_name="Google",
+    start_date="2020",
+    end_date="2021",
+    company_location="Paris, France",
     tasks=["Develop code", "Manage engineers"],
 )
 

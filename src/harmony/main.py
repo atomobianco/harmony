@@ -3,13 +3,7 @@ import logging
 
 import harmony.parsers as parsers
 import harmony.formatters as formatters
-
-
-def parse_file(file_name):
-    """Parse file and return a string"""
-    with open(file_name, "r") as f:
-        return f.read()
-
+from harmony.utils import parse_file
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
@@ -23,12 +17,12 @@ if __name__ == "__main__":
     # args.resume = "./tests/resources/resume.md"
     args.resume = "/mnt/TARANIS/myCV/resume.md"
     resume_file_content = parse_file(args.resume)
-    resume = parsers.resume_parser(resume_file_content)
-    resume_formatted_raw = formatters.resume_formatter(resume)
-    resume_formatted = parsers.resume_parser(resume_formatted_raw)
+    resume_parsed = parsers.resume_parser(resume_file_content)
+    resume_formatted_response = formatters.resume_formatter(resume_parsed)
+    resume_formatted_parsed = parsers.resume_parser(resume_formatted_response)
 
-    logging.info(f"output:\n{resume}")
-    logging.info(f"output:\n{resume_formatted}")
+    logging.info(f"output:\n{resume_parsed}")
+    logging.info(f"output:\n{resume_formatted_parsed}")
 
     # args.offer = "./tests/resources/offer.md"
     # raw_offer = parse_file(args.offer)

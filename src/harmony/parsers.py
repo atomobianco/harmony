@@ -10,18 +10,14 @@ from harmony.core import Position, Resume
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-model_name = "gpt-3.5-turbo-16k"
+model_name = "gpt-3.5-turbo-16k-0613"
 
 # TODO = reduce hallucinations
 #  - https://www.youtube.com/watch?v=1yOxOo84yqU
 #  - > 3.5 is very bad at negative prompts, like “we don’t have x” or “do NOT return an answer if you’re unsure” … you have to phrase things in positive instructions. Gpt-4 is much, much better at handling negatives (OpenAI calls this out on their model card).
 #    https://community.openai.com/t/building-hallucination-resistant-prompts/131036/26?page=2
 
-system_message = "You are a recruiter. You have a resume and want to parse it."
-system_message = (
-    "You are a recruiter. Your role is to take a resume detailed by triple back ticks and return a "
-    "structured response as defined by the functions detailed."
-)
+system_message = "Return a structured response as defined by the functions detailed."
 
 parse_summary_function = {
     "name": "parse_summary",
@@ -49,32 +45,48 @@ parse_positions_function = {
                 "items": {
                     "type": "object",
                     "properties": {
-                        "role": {
+                        "job_title": {
                             "type": "string",
-                            "description": "The role of the position (e.g. Software Engineer)",
+                            "description": "The official title held at the company, e.g. Software Engineer",
                         },
-                        "company": {
+                        "company_name": {
                             "type": "string",
-                            "description": "The company of position (e.g. Google)",
+                            "description": "The name of the company or organization where one worked, e.g. Google",
                         },
-                        "start": {
+                        "start_date": {
                             "type": "string",
-                            "description": "The start date of position",
+                            "description": "Start date for the position, e.g. 2019",
                         },
-                        "end": {
+                        "end_date": {
                             "type": "string",
-                            "description": "The end date of position",
+                            "description": "End date for the position, e.g. 2019",
                         },
-                        "location": {
+                        "company_location": {
                             "type": "string",
-                            "description": "The location of position",
+                            "description": "The city and country where the company is located, e.g. Paris, France",
                         },
                         "tasks": {
                             "type": "array",
-                            "description": "The responsibilities or accomplishments of position",
+                            "description": "Responsibilities or achievements accomplished in this position",
                             "items": {
                                 "type": "string",
-                                "description": "A responsibility or accomplishment of position",
+                                "description": "The responsibility or achievement accomplished in this position",
+                            },
+                        },
+                        "skills": {
+                            "type": "array",
+                            "description": "Skills utilized or gained during this job",
+                            "items": {
+                                "type": "string",
+                                "description": "Skill utilized or gained during this job",
+                            },
+                        },
+                        "tools": {
+                            "type": "array",
+                            "description": "Tools, software, or programming languages used in this role",
+                            "items": {
+                                "type": "string",
+                                "description": "Tool, software, or programming language used in this role",
                             },
                         },
                     },
