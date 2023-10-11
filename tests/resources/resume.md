@@ -28,6 +28,8 @@ Highly skilled software engineer with 5 years of experience in full-stack web de
 - Implemented unit tests and conducted code reviews to ensure software quality and maintainability.
 - Assisted in the integration of third-party APIs and platforms for seamless data exchange.
 
+Tools: AngularJS
+
 ---
 
 ## Skills

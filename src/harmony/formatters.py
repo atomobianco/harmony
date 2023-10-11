@@ -2,6 +2,7 @@ from harmony.core import Resume, Position
 import openai
 from dotenv import load_dotenv
 import os
+import copy
 import logging
 from harmony.utils import num_tokens_from_messages, calculate_cost
 from pkg_resources import resource_stream
@@ -143,3 +144,17 @@ def position_formatter(position: Position, model: str = default_model) -> str:
     else:
         result = ""
     return result
+
+
+def resume_formatter_by_chunks(resume: Resume, model: str = default_model) -> str:
+    """Format a resume by chunks."""
+    resume_copy = copy.deepcopy(resume)
+
+    # Rework the positions one by one
+    positions = []
+    for position in resume.positions:
+        position_formatted = position_formatter(position, model)
+        positions.append(position_formatted)
+    resume_copy.positions = positions
+
+    return str(resume_copy)
