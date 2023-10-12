@@ -22,6 +22,10 @@ position_system_message = (
     resource_stream(__name__, "data/position_system_message.md").read().decode("utf-8")
 )
 
+skills_system_message = (
+    resource_stream(__name__, "data/skills_system_message.md").read().decode("utf-8")
+)
+
 intro_position_message = (
     "Here follows, surrounded by triple back ticks, a position that a candidate held, along with a list of tasks that "
     "the candidate was responsible and accomplished during the job."
@@ -146,6 +150,31 @@ def position_formatter(position: Position, model: str = default_model) -> str:
     return result
 
 
+def skills_formatter(skills: str, model: str = "gpt-3.5-turbo-0613") -> str:
+    messages = [
+        {"role": "system", "content": skills_system_message},
+        {"role": "user", "content": skills},
+    ]
+    logging.info(
+        f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
+    )
+    response = openai.ChatCompletion.create(model=model, messages=messages)
+    logging.info(
+        f"Tokens usage: "
+        f"{response.usage.prompt_tokens} (prompt), "
+        f"{response.usage.completion_tokens} (completion), "
+        f"{response.usage.total_tokens} (total)"
+    )
+    logging.info(f"Total cost: {calculate_cost(response.usage)}")
+
+    response_message = response["choices"][0]["message"]
+    if response_message.get("role") == "assistant":
+        result = response_message.get("content")
+    else:
+        result = ""
+    return result
+
+
 def resume_formatter_by_chunks(resume: Resume, model: str = default_model) -> str:
     """Format a resume by chunks."""
     resume_copy = copy.deepcopy(resume)
@@ -157,4 +186,10 @@ def resume_formatter_by_chunks(resume: Resume, model: str = default_model) -> st
         positions.append(position_formatted)
     resume_copy.positions = positions
 
+    # Rework the skills
+    skills_from_positions = ", ".join(
+        [skill for position in resume.positions for skill in position.skills]
+    )
+    skills = ", ".join([skills_from_positions, resume.skills])
+    resume_copy.skills = skills_formatter(skills)
     return str(resume_copy)

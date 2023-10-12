@@ -106,6 +106,14 @@ parse_resume_function = {
                     "summary": parse_summary_function["parameters"]["properties"][
                         "summary"
                     ],
+                    "skills": {
+                        "type": "array",
+                        "description": "Skills utilized or gained during this job",
+                        "items": {
+                            "type": "string",
+                            "description": "A list of skills",
+                        },
+                    },
                     "positions": parse_positions_function["parameters"]["properties"][
                         "positions"
                     ],
@@ -181,7 +189,8 @@ def resume_parser(raw: str) -> Resume:
     else:
         resume = {}
     summary = resume.get("summary", "")
+    skills = resume.get("skills", "")
     positions = [
         from_dict(data_class=Position, data=p) for p in resume.get("positions")
     ]
-    return Resume(raw=raw, summary=summary, positions=positions)
+    return Resume(raw=raw, summary=summary, skills=skills, positions=positions)

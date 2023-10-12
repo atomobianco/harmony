@@ -18,16 +18,16 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Parse the resume
-    # args.resume = "./tests/resources/resume.md"
-    args.resume = "/mnt/TARANIS/myCV/resume.md"
+    args.resume = "./tests/resources/resume.md"
+    # args.resume = "/mnt/TARANIS/myCV/resume.md"
     resume_file_content = parse_file(args.resume)
     resume = parsers.resume_parser(resume_file_content)
     logging.info(f"\n\n{dashes} resume: {dashes}\n{resume}\n\n")
 
     # Rework the resume
-    resume_formatted = formatters.resume_formatter_by_chunks(resume)
-    resume_final = resume_formatted
-    logging.info(f"\n\n{dashes} resume_final: {dashes}\n{resume_final}\n\n")
+    # resume_formatted = formatters.resume_formatter_by_chunks(resume)
+    # resume_final = resume_formatted
+    # logging.info(f"\n\n{dashes} resume_final: {dashes}\n{resume_final}\n\n")
 
     # args.offer = "./tests/resources/offer.md"
     # raw_offer = parse_file(args.offer)

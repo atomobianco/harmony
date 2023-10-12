@@ -42,13 +42,20 @@ class Resume:
 
     raw: str = field(default_factory=str)
     summary: str = field(default_factory=str)
+    skills: List[str] = field(default_factory=list)
     positions: List[Position] = field(default_factory=list)
 
     def __str__(self) -> str:
-        summary_str = f"## Summary\n\n{self.summary}"
-        positions_str = "\n\n".join([f"{position}" for position in self.positions])
-        experience_str = f"## Experience\n\n{positions_str}"
-        return f"{summary_str}\n\n{experience_str}"
+        resume_str = ""
+        if self.summary:
+            resume_str += f"## Summary\n\n{self.summary}"
+        if self.skills:
+            resume_str += f"\n\n## Skills\n\n{self.skills}"
+        if self.positions:
+            positions_str = "\n\n".join([f"{position}" for position in self.positions])
+            experience_str = f"## Experience\n\n{positions_str}"
+            resume_str += f"\n\n{experience_str}"
+        return resume_str
 
 
 @dataclass
