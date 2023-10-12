@@ -8,7 +8,7 @@ from harmony.utils import parse_file
 if __name__ == "__main__":
     dashes = "-" * 40
     logging.basicConfig(
-        filename=f"downloads//harmony-{uuid.uuid4()}.log", level=logging.INFO
+        filename=f"logs//harmony-{uuid.uuid4()}.log", level=logging.INFO
     )
     logging.info("Started")
 
