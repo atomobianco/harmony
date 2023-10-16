@@ -187,9 +187,8 @@ def resume_formatter_by_chunks(resume: Resume, model: str = default_model) -> st
     resume_copy.positions = positions
 
     # Rework the skills
-    skills_from_positions = ", ".join(
-        [skill for position in resume.positions for skill in position.skills]
-    )
-    skills = ", ".join([skills_from_positions, resume.skills])
-    resume_copy.skills = skills_formatter(skills)
+    skills = []
+    skills.extend([skill for position in resume.positions for skill in position.skills])
+    skills.extend(resume.skills)
+    resume_copy.skills = map(str.strip, skills_formatter(", ".join(skills)).split(","))
     return str(resume_copy)

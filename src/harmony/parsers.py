@@ -191,6 +191,6 @@ def resume_parser(raw: str) -> Resume:
     summary = resume.get("summary", "")
     skills = resume.get("skills", "")
     positions = [
-        from_dict(data_class=Position, data=p) for p in resume.get("positions")
+        from_dict(data_class=Position, data=p) for p in resume.get("positions", [])
     ]
     return Resume(raw=raw, summary=summary, skills=skills, positions=positions)
