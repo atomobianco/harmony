@@ -5,7 +5,7 @@ import openai
 import os
 from dacite import from_dict
 from harmony.utils import num_tokens_from_messages, calculate_cost
-from harmony.core import Position, Resume
+from harmony.core import Position, Resume, Offer
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -194,3 +194,7 @@ def resume_parser(raw: str) -> Resume:
         from_dict(data_class=Position, data=p) for p in resume.get("positions", [])
     ]
     return Resume(raw=raw, summary=summary, skills=skills, positions=positions)
+
+
+def offer_parser(raw: str) -> Offer:
+    return Offer(raw=raw)

@@ -62,4 +62,7 @@ class Resume:
 class Offer:
     """An offer of a job position."""
 
-    raw: str  # raw text of the offer, e.g. "DevOps Engineer\nAs a DevOps Engineer, you will:\n..."
+    raw: str = field(default_factory=str)
+
+    def __str__(self) -> str:
+        return self.raw

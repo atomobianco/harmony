@@ -1,4 +1,4 @@
-from harmony.core import Resume, Position
+from harmony.core import Resume, Position, Offer
 import openai
 from dotenv import load_dotenv
 import os
@@ -20,6 +20,12 @@ system_message = (
 
 position_system_message = (
     resource_stream(__name__, "data/position_system_message.md").read().decode("utf-8")
+)
+
+position_aligned_system_message = (
+    resource_stream(__name__, "data/position_aligned_system_message.md")
+    .read()
+    .decode("utf-8")
 )
 
 skills_system_message = (
@@ -108,12 +114,20 @@ def resume_formatter(resume: Resume, model: str = default_model) -> str:
     return result
 
 
-def position_formatter(position: Position, model: str = default_model) -> str:
+def position_formatter(
+    position: Position, model: str = default_model, offer: Offer = None
+) -> str:
     """Format a position."""
     position_str = str(position)
+    sys_message = position_aligned_system_message if offer else position_system_message
+    user_message = (
+        f"1. Job position:\n\n```{position_str}```\n\n2. Job they are applying for:\n\n```{offer.raw}```"
+        if offer
+        else position_str
+    )
     messages = [
-        {"role": "system", "content": position_system_message},
-        {"role": "user", "content": position_str},
+        {"role": "system", "content": sys_message},
+        {"role": "user", "content": user_message},
     ]
     logging.info(
         f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
@@ -175,14 +189,16 @@ def skills_formatter(skills: str, model: str = "gpt-3.5-turbo-0613") -> str:
     return result
 
 
-def resume_formatter_by_chunks(resume: Resume, model: str = default_model) -> str:
+def resume_formatter_by_chunks(
+    resume: Resume, model: str = default_model, offer: Offer = None
+) -> str:
     """Format a resume by chunks."""
     resume_copy = copy.deepcopy(resume)
 
     # Rework the positions one by one
     positions = []
     for position in resume.positions:
-        position_formatted = position_formatter(position, model)
+        position_formatted = position_formatter(position, model, offer)
         positions.append(position_formatted)
     resume_copy.positions = positions
 
@@ -190,5 +206,7 @@ def resume_formatter_by_chunks(resume: Resume, model: str = default_model) -> st
     skills = []
     skills.extend([skill for position in resume.positions for skill in position.skills])
     skills.extend(resume.skills)
-    resume_copy.skills = map(str.strip, skills_formatter(", ".join(skills)).split(","))
+    resume_copy.skills = list(
+        map(str.strip, skills_formatter(", ".join(skills)).split(","))
+    )
     return str(resume_copy)
