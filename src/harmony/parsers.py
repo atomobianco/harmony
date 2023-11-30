@@ -171,10 +171,10 @@ def resume_parser(raw: str) -> Resume:
     )
     logging.info(f"Total cost: {calculate_cost(response.usage)}")
 
-    response_message = response["choices"][0]["message"]
-    if response_message.get("function_call"):
+    response_message = response.choices[0].message
+    if response_message.function_call:
         try:
-            function_args = json.loads(response_message["function_call"]["arguments"])
+            function_args = json.loads(response_message.function_call.arguments)
         except json.decoder.JSONDecodeError:
             logging.error(f"Error parsing function call: {response_message}")
             raise

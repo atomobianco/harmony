@@ -34,8 +34,8 @@ def calculate_cost(usage, model="gpt-3.5-turbo-16k"):
         model_pricing = pricing[model]
     except KeyError:
         raise ValueError("Invalid model specified")
-    prompt_cost = usage["prompt_tokens"] * model_pricing["prompt"] / 1000
-    completion_cost = usage["completion_tokens"] * model_pricing["completion"] / 1000
+    prompt_cost = usage.prompt_tokens * model_pricing["prompt"] / 1000
+    completion_cost = usage.completion_tokens * model_pricing["completion"] / 1000
     total_cost = prompt_cost + completion_cost
     return total_cost
 

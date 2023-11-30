@@ -104,9 +104,9 @@ def resume_formatter(resume: Resume, model: str = default_model) -> str:
     )
     logging.info(f"Total cost: {calculate_cost(response.usage)}")
 
-    response_message = response["choices"][0]["message"]
-    if response_message.get("assistant"):
-        result = response_message["assistant"]["content"]
+    response_message = response.choices[0].message
+    if response_message.role == "assistant":
+        result = response_message.content
     else:
         result = ""
     return result
@@ -154,9 +154,9 @@ def position_formatter(
     )
     logging.info(f"Total cost: {calculate_cost(response.usage)}")
 
-    response_message = response["choices"][0]["message"]
-    if response_message.get("role") == "assistant":
-        result = response_message.get("content")
+    response_message = response.choices[0].message
+    if response_message.role == "assistant":
+        result = response_message.content
     else:
         result = ""
     return result
@@ -179,9 +179,9 @@ def skills_formatter(skills: str, model: str = "gpt-3.5-turbo-0613") -> str:
     )
     logging.info(f"Total cost: {calculate_cost(response.usage)}")
 
-    response_message = response["choices"][0]["message"]
-    if response_message.get("role") == "assistant":
-        result = response_message.get("content")
+    response_message = response.choices[0].message
+    if response_message.role == "assistant":
+        result = response_message.content
     else:
         result = ""
     return result
