@@ -10,16 +10,24 @@ if __name__ == "__main__":
     dashes = "-" * 40
     ts = datetime.now().strftime("%Y-%m-%dT%Hh%Mm")
     uid = str(uuid.uuid4())[:8]
-    logging.basicConfig(filename=f"logs/harmony_{ts}_{uid}.log", level=logging.INFO)
-    logging.basicConfig(level=logging.INFO)
-    logging.info("Started")
 
     parser = argparse.ArgumentParser(description="Harmony Resume Parser")
     parser.add_argument("--resume", help="resume file to parse", required=False)
     parser.add_argument("--offer", help="offer file to parse", required=False)
+    parser.add_argument(
+        "--console", help="log to console", required=False, action="store_true"
+    )
+
     args = parser.parse_args()
-    args.resume = "./tests/resources/resume.md"
-    args.offer = "./tests/resources/offer.md"
+    if not args.resume:
+        args.resume = "./tests/resources/resume.md"
+    if not args.offer:
+        args.offer = "./tests/resources/offer.md"
+    if args.console:
+        logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(filename=f"logs/harmony_{ts}_{uid}.log", level=logging.INFO)
+    logging.info("Started")
 
     # Parse the resume
     resume_file_content = parse_file(args.resume)
