@@ -26,7 +26,7 @@ if __name__ == "__main__":
     if args.console:
         logging.basicConfig(level=logging.INFO)
     else:
-        logging.basicConfig(filename=f"logs/harmony_{ts}_{uid}.log", level=logging.INFO)
+        logging.basicConfig(level=logging.INFO, filename=f"logs/harmony_{ts}_{uid}.log")
     logging.info("Started")
 
     # Parse the resume
