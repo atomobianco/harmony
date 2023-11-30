@@ -1,5 +1,5 @@
 from harmony.core import Resume, Position, Offer
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import copy
@@ -8,7 +8,8 @@ from harmony.utils import num_tokens_from_messages, calculate_cost
 from pkg_resources import resource_stream
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 default_model = "gpt-4-0613"
 
@@ -94,10 +95,7 @@ def resume_formatter(resume: Resume, model: str = default_model) -> str:
     logging.info(
         f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
     )
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=messages,
-    )
+    response = client.chat.completions.create(model=model, messages=messages)
     logging.info(
         f"Tokens usage: "
         f"{response.usage.prompt_tokens} (prompt), "
@@ -132,7 +130,7 @@ def position_formatter(
     logging.info(
         f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
     )
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model=model,
         messages=messages,
         temperature=0.2,
@@ -172,7 +170,7 @@ def skills_formatter(skills: str, model: str = "gpt-3.5-turbo-0613") -> str:
     logging.info(
         f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
     )
-    response = openai.ChatCompletion.create(model=model, messages=messages)
+    response = client.chat.completions.create(model=model, messages=messages)
     logging.info(
         f"Tokens usage: "
         f"{response.usage.prompt_tokens} (prompt), "

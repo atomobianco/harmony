@@ -1,14 +1,14 @@
 import json
 from dotenv import load_dotenv
 import logging
-import openai
+from openai import OpenAI
 import os
 from dacite import from_dict
 from harmony.utils import num_tokens_from_messages, calculate_cost
 from harmony.core import Position, Resume, Offer
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 model_name = "gpt-3.5-turbo-16k-0613"
 
@@ -131,11 +131,8 @@ def positions_parser(raw: str) -> list[Position]:
     ]
     logging.info(f"Tokens messages: {num_tokens_from_messages(messages, model_name)}")
     functions = [parse_positions_function]
-    response = openai.ChatCompletion.create(
-        model=model_name,
-        messages=messages,
-        functions=functions,
-        function_call="auto",
+    response = client.chat.completions.create(
+        model=model_name, messages=messages, functions=functions, function_call="auto"
     )
     logging.info(
         f"Tokens usage: "
@@ -163,11 +160,8 @@ def resume_parser(raw: str) -> Resume:
         f"Tokens used by messages: {num_tokens_from_messages(messages, model_name)}"
     )
     functions = [parse_resume_function]
-    response = openai.ChatCompletion.create(
-        model=model_name,
-        messages=messages,
-        functions=functions,
-        function_call="auto",
+    response = client.chat.completions.create(
+        model=model_name, messages=messages, functions=functions, function_call="auto"
     )
     logging.info(
         f"Tokens usage: "
