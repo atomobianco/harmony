@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime
 import harmony.parsers as parsers
 import harmony.formatters as formatters
+import harmony.writers as writers
 from harmony.utils import parse_file
 
 if __name__ == "__main__":
@@ -45,8 +46,8 @@ if __name__ == "__main__":
     resume_formatted = formatters.resume_formatter_by_chunks(resume)
     logging.info(f"\n\n{dashes} resume_formatted: {dashes}\n{resume_formatted}\n\n")
 
-    if args.offer:
-        # Rework the resume formatted aligning with the offer
+    if offer:
+        # Align the formatted resume with the offer
         resume_formatted_aligned = formatters.resume_formatter_by_chunks(
             resume, offer=offer
         )
@@ -54,7 +55,12 @@ if __name__ == "__main__":
             f"\n\n{dashes} resume_formatted_aligned: {dashes}\n{resume_formatted_aligned}\n\n"
         )
 
-    # Strengths and Weaknesses
-    # P.S. Consider the resume formatted alone against the offer and draw the strengths and weaknesses
+        # Cover letter
+        cover_letter = writers.cover_letter_writer(resume_formatted_aligned, offer.raw)
+        logging.info(f"\n\n{dashes} cover_letter: {dashes}\n{cover_letter}\n\n")
 
-    # Cover letter (About me, Why XYZ? Why Me?)
+        # Strengths and Weaknesses
+        strengths_weaknesses = writers.strengths_weaknesses_writer(
+            resume_formatted, offer.raw
+        )
+        logging.info(f"\n\n{dashes} strengths_weaknesses: {dashes}\n{cover_letter}\n\n")

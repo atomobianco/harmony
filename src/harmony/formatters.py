@@ -11,7 +11,7 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-default_model = "gpt-4-0613"
+default_model = "gpt-4-1106-preview"
 
 system_message = (
     "Ignore all previous instructions. "
@@ -102,7 +102,7 @@ def resume_formatter(resume: Resume, model: str = default_model) -> str:
         f"{response.usage.completion_tokens} (completion), "
         f"{response.usage.total_tokens} (total)"
     )
-    logging.info(f"Total cost: {calculate_cost(response.usage)}")
+    logging.info(f"Total cost: {calculate_cost(response.usage, model)}")
 
     response_message = response.choices[0].message
     if response_message.role == "assistant":
@@ -144,7 +144,7 @@ def position_formatter(
         # higher can help reduce redundancy in the generated content.
         presence_penalty=0.5,
         # Similarly, you can increase the presence penalty to discourage the inclusion of similar words or phrases.
-        # A value around 0.5 or higher can encourage the model to provide more varied rephrasings.
+        # A value around 0.5 or higher can encourage the model to provide more varied rephrasing.
     )
     logging.info(
         f"Tokens usage: "
@@ -152,7 +152,7 @@ def position_formatter(
         f"{response.usage.completion_tokens} (completion), "
         f"{response.usage.total_tokens} (total)"
     )
-    logging.info(f"Total cost: {calculate_cost(response.usage)}")
+    logging.info(f"Total cost: {calculate_cost(response.usage, model)}")
 
     response_message = response.choices[0].message
     if response_message.role == "assistant":
@@ -177,7 +177,7 @@ def skills_formatter(skills: str, model: str = "gpt-3.5-turbo-0613") -> str:
         f"{response.usage.completion_tokens} (completion), "
         f"{response.usage.total_tokens} (total)"
     )
-    logging.info(f"Total cost: {calculate_cost(response.usage)}")
+    logging.info(f"Total cost: {calculate_cost(response.usage, model)}")
 
     response_message = response.choices[0].message
     if response_message.role == "assistant":

@@ -7,17 +7,29 @@ def parse_file(file_name):
         return f.read()
 
 
-def calculate_cost(usage, model="gpt-3.5-turbo-16k"):
+def calculate_cost(usage, model):
     pricing = {
-        "gpt-3.5-turbo-4k": {
+        "gpt-3.5-turbo": {
+            "prompt": 0.0010,
+            "completion": 0.0020,
+        },
+        "gpt-3.5-turbo-1106": {
+            "prompt": 0.0010,
+            "completion": 0.0020,
+        },
+        "gpt-3.5-turbo-0613": {
             "prompt": 0.0015,
-            "completion": 0.002,
+            "completion": 0.0020,
         },
-        "gpt-3.5-turbo-16k": {
-            "prompt": 0.003,
-            "completion": 0.004,
+        "gpt-3.5-turbo-16k-0613": {
+            "prompt": 0.0030,
+            "completion": 0.0040,
         },
-        "gpt-4-8k": {
+        "gpt-4": {
+            "prompt": 0.03,
+            "completion": 0.06,
+        },
+        "gpt-4-0613": {
             "prompt": 0.03,
             "completion": 0.06,
         },
@@ -25,9 +37,13 @@ def calculate_cost(usage, model="gpt-3.5-turbo-16k"):
             "prompt": 0.06,
             "completion": 0.12,
         },
-        "text-embedding-ada-002-v2": {
-            "prompt": 0.0001,
-            "completion": 0.0001,
+        "gpt-4-32k-0613": {
+            "prompt": 0.06,
+            "completion": 0.12,
+        },
+        "gpt-4-1106-preview": {
+            "prompt": 0.01,
+            "completion": 0.03,
         },
     }
     try:
@@ -48,12 +64,12 @@ def num_tokens_from_messages(messages, model):
         print("Warning: model not found. Using cl100k_base encoding.")
         encoding = tiktoken.get_encoding("cl100k_base")
     if model in {
+        "gpt-3.5-turbo-1106",
         "gpt-3.5-turbo-0613",
         "gpt-3.5-turbo-16k-0613",
-        "gpt-4-0314",
-        "gpt-4-32k-0314",
         "gpt-4-0613",
         "gpt-4-32k-0613",
+        "gpt-4-1106-preview",
     }:
         tokens_per_message = 3
         tokens_per_name = 1
@@ -63,18 +79,16 @@ def num_tokens_from_messages(messages, model):
         )
         tokens_per_name = -1  # if there's a name, the role is omitted
     elif "gpt-3.5-turbo" in model:
-        print(
-            "Warning: gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613."
-        )
-        return num_tokens_from_messages(messages, model="gpt-3.5-turbo-0613")
+        return num_tokens_from_messages(messages, model="gpt-3.5-turbo-1106")
+    elif "gpt-4-32k" in model:
+        return num_tokens_from_messages(messages, model="gpt-4-32k-0613")
     elif "gpt-4" in model:
-        print(
-            "Warning: gpt-4 may update over time. Returning num tokens assuming gpt-4-0613."
-        )
         return num_tokens_from_messages(messages, model="gpt-4-0613")
     else:
         raise NotImplementedError(
-            f"""num_tokens_from_messages() is not implemented for model {model}. See https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are converted to tokens."""
+            f"""num_tokens_from_text() is not implemented for model {model}. See """
+            f"""https://github.com/openai/openai-python/blob/main/chatml.md for information on how messages are """
+            f"""converted to tokens."""
         )
     num_tokens = 0
     for message in messages:

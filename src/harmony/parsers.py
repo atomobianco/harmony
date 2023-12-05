@@ -1,4 +1,6 @@
 import json
+from typing import List, Dict
+
 from dotenv import load_dotenv
 import logging
 from openai import OpenAI
@@ -10,12 +12,7 @@ from harmony.core import Position, Resume, Offer
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-model_name = "gpt-3.5-turbo-16k-0613"
-
-# TODO = reduce hallucinations
-#  - https://www.youtube.com/watch?v=1yOxOo84yqU
-#  - > 3.5 is very bad at negative prompts, like “we don’t have x” or “do NOT return an answer if you’re unsure” … you have to phrase things in positive instructions. Gpt-4 is much, much better at handling negatives (OpenAI calls this out on their model card).
-#    https://community.openai.com/t/building-hallucination-resistant-prompts/131036/26?page=2
+default_model = "gpt-3.5-turbo-16k-0613"
 
 parse_summary_function = {
     "name": "parse_summary",
@@ -129,10 +126,15 @@ def positions_parser(raw: str) -> list[Position]:
     messages = [
         {"role": "user", "content": f"```{raw}```"},
     ]
-    logging.info(f"Tokens messages: {num_tokens_from_messages(messages, model_name)}")
+    logging.info(
+        f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
+    )
     functions = [parse_positions_function]
     response = client.chat.completions.create(
-        model=model_name, messages=messages, functions=functions, function_call="auto"
+        model=default_model,
+        messages=messages,
+        functions=functions,
+        function_call="auto",
     )
     logging.info(
         f"Tokens usage: "
@@ -140,11 +142,11 @@ def positions_parser(raw: str) -> list[Position]:
         f"{response.usage.completion_tokens} (completion), "
         f"{response.usage.total_tokens} (total)"
     )
-    logging.info(f"Total cost: {calculate_cost(response.usage)}")
+    logging.info(f"Total cost: {calculate_cost(response.usage, default_model)}")
 
-    response_message = response["choices"][0]["message"]
-    if response_message.get("function_call"):
-        function_args = json.loads(response_message["function_call"]["arguments"])
+    response_message = response.choices[0].message
+    if response_message.function_call:
+        function_args = json.loads(response_message.function_call.arguments)
         positions = function_args.get("positions", [])
     else:
         positions = []
@@ -157,11 +159,14 @@ def resume_parser(raw: str) -> Resume:
         {"role": "user", "content": f"```{raw}```"},
     ]
     logging.info(
-        f"Tokens used by messages: {num_tokens_from_messages(messages, model_name)}"
+        f"Tokens used by messages: {num_tokens_from_messages(messages, default_model)}"
     )
     functions = [parse_resume_function]
     response = client.chat.completions.create(
-        model=model_name, messages=messages, functions=functions, function_call="auto"
+        model=default_model,
+        messages=messages,
+        functions=functions,
+        function_call="auto",
     )
     logging.info(
         f"Tokens usage: "
@@ -169,7 +174,7 @@ def resume_parser(raw: str) -> Resume:
         f"{response.usage.completion_tokens} (completion), "
         f"{response.usage.total_tokens} (total)"
     )
-    logging.info(f"Total cost: {calculate_cost(response.usage)}")
+    logging.info(f"Total cost: {calculate_cost(response.usage, default_model)}")
 
     response_message = response.choices[0].message
     if response_message.function_call:

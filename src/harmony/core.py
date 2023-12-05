@@ -50,7 +50,10 @@ class Resume:
         if self.summary:
             resume_str += f"## Summary\n\n{self.summary}"
         if self.skills:
-            resume_str += f"\n\n## Skills\n\n{self.skills}"
+            skills_str = (
+                ", ".join(self.skills) if type(self.skills) is list else self.skills
+            )
+            resume_str += f"\n\n## Skills\n\n{skills_str}"
         if self.positions:
             positions_str = "\n\n".join([f"{position}" for position in self.positions])
             experience_str = f"## Experience\n\n{positions_str}"
