@@ -10,13 +10,11 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 default_model = "gpt-4-1106-preview"
 
 cover_letter_system_message = (
-    resource_stream(__name__, "data/cover_letter_system_message.md")
-    .read()
-    .decode("utf-8")
+    resource_stream(__name__, "data/system_cover_letter.md").read().decode("utf-8")
 )
 
 strengths_weaknesses_system_message = (
-    resource_stream(__name__, "data/strengths_weaknesses_system_message.md")
+    resource_stream(__name__, "data/system_strengths_weaknesses.md")
     .read()
     .decode("utf-8")
 )

@@ -20,17 +20,15 @@ system_message = (
 )
 
 position_system_message = (
-    resource_stream(__name__, "data/position_system_message.md").read().decode("utf-8")
+    resource_stream(__name__, "data/system_position.md").read().decode("utf-8")
 )
 
 position_aligned_system_message = (
-    resource_stream(__name__, "data/position_aligned_system_message.md")
-    .read()
-    .decode("utf-8")
+    resource_stream(__name__, "data/system_position_aligned.md").read().decode("utf-8")
 )
 
 skills_system_message = (
-    resource_stream(__name__, "data/skills_system_message.md").read().decode("utf-8")
+    resource_stream(__name__, "data/system_skills.md").read().decode("utf-8")
 )
 
 intro_position_message = (

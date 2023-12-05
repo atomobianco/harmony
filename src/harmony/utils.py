@@ -14,16 +14,16 @@ def calculate_cost(usage, model):
             "completion": 0.0020,
         },
         "gpt-3.5-turbo-1106": {
-            "prompt": 0.0010,
-            "completion": 0.0020,
+            "prompt": 0.001,
+            "completion": 0.002,
         },
         "gpt-3.5-turbo-0613": {
             "prompt": 0.0015,
-            "completion": 0.0020,
+            "completion": 0.002,
         },
         "gpt-3.5-turbo-16k-0613": {
-            "prompt": 0.0030,
-            "completion": 0.0040,
+            "prompt": 0.003,
+            "completion": 0.004,
         },
         "gpt-4": {
             "prompt": 0.03,

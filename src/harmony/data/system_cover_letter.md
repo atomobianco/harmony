@@ -15,4 +15,4 @@ Structure your output in three sections:
 - Why Me: explain why the candidate is a good fit for the position.
 
 # OUTPUT
-The cover letter with the three sections detailed above.
+The cover letter body with the three sections detailed above.

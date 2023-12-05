@@ -63,4 +63,6 @@ if __name__ == "__main__":
         strengths_weaknesses = writers.strengths_weaknesses_writer(
             resume_formatted, offer.raw
         )
-        logging.info(f"\n\n{dashes} strengths_weaknesses: {dashes}\n{cover_letter}\n\n")
+        logging.info(
+            f"\n\n{dashes} strengths_weaknesses: {dashes}\n{strengths_weaknesses}\n\n"
+        )
