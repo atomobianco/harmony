@@ -1,24 +1,46 @@
 from dataclasses import dataclass
 from typing import List
 from dataclasses import field
+from pydantic import BaseModel, Field
+from instructor import openai_schema, openai_function
 
 
-@dataclass
-class Position:
-    """A job position hold somewhere during a period of time."""
+class Position(BaseModel):
+    """A candidate job position"""
 
-    job_title: str  # The official title held at the company, e.g. Software Engineer
-    company_name: str  # The name of the company or organization where one worked, e.g. Google
-    company_location: str  # The city and country where the company is located, e.g. Paris, France
-    start_date: str  # Start date for the position, e.g. 2019
-    end_date: str  # End date for the position, e.g. 2019
-    tasks: List[str]  # Responsibilities and achievements accomplished in this position
-    skills: List[str] = field(
-        default_factory=list
-    )  # Skills utilized or gained during this job
-    tools: List[str] = field(
-        default_factory=list
-    )  # Tools, software, or programming languages used in this role
+    job_title: str = Field(
+        description="The job title held at the company",
+        examples=["Software Engineer"],
+    )
+    company_name: str = Field(
+        description="The name of the company",
+        examples=["Google"],
+    )
+    company_location: str = Field(
+        description="The city and country where the company is located",
+        examples=["Paris, France"],
+    )
+    start_date: str = Field(
+        description="Start date for the position",
+        examples=["2019"],
+    )
+    end_date: str = Field(
+        description="End date for the position",
+        examples=["2019"],
+    )
+    tasks: list[str] = Field(
+        description="Responsibilities or achievements accomplished in this position",
+    )
+    skills: List[str] = Field(
+        default_factory=list,
+        description="Skills utilized or gained during this job",
+        examples=["Project management", "Career development"],
+    )
+    tools: List[str] = Field(
+        default_factory=list,
+        description="Tools, software stack, or programming languages used in this role",
+        examples=["AWS", "Python"],
+    )
 
     def __str__(self) -> str:
         tasks_str = "\n".join([f"- {task}" for task in self.tasks])
@@ -36,14 +58,32 @@ class Position:
         return position_str
 
 
-@dataclass
-class Resume:
-    """A resume of a person, both in raw and parsed form."""
+class PositionsExtractor(BaseModel):
+    """Extract the candidate's job positions from the text"""
 
-    raw: str = field(default_factory=str)
-    summary: str = field(default_factory=str)
-    skills: List[str] = field(default_factory=list)
-    positions: List[Position] = field(default_factory=list)
+    positions: List[Position]
+
+
+@openai_function
+def parse_positions(
+    positions: List[Position],
+):
+    """Extract the candidate's job positions from the text"""
+
+
+class Resume(BaseModel):
+    """A candidate's resume"""
+
+    raw: str = Field(default_factory=str, exclude=True)
+    summary: str = Field(
+        default_factory=str, description="The summary of the candidate"
+    )
+    skills: List[str] = Field(
+        default_factory=list, description="The skills of the candidate"
+    )
+    positions: List[Position] = Field(
+        ..., default_factory=list, description="The positions of the candidate"
+    )
 
     def __str__(self) -> str:
         resume_str = ""
@@ -59,6 +99,12 @@ class Resume:
             experience_str = f"## Experience\n\n{positions_str}"
             resume_str += f"\n\n{experience_str}"
         return resume_str
+
+
+class ResumeExtractor(BaseModel):
+    """Extract the candidate's resume from the text"""
+
+    resume: Resume
 
 
 @dataclass

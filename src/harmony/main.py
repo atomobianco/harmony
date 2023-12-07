@@ -30,36 +30,36 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.INFO, filename=f"logs/harmony_{ts}_{uid}.log")
     logging.info("Started")
 
-    # Parse the resume
     resume_file_content = parse_file(args.resume)
+    logging.info(
+        f"\n\n{dashes} resume_file_content: {dashes}\n{resume_file_content}\n\n"
+    )
+
     resume = parsers.resume_parser(resume_file_content)
     logging.info(f"\n\n{dashes} resume: {dashes}\n{resume}\n\n")
 
+    exit(1)
+
     offer = None
     if args.offer:
-        # Parse the offer
         offer_file_content = parse_file(args.offer)
         offer = parsers.offer_parser(offer_file_content)
         logging.info(f"\n\n{dashes} offer: {dashes}\n{offer}\n\n")
 
-    # Rework the resume formatted alone
-    resume_formatted = formatters.resume_formatter_by_chunks(resume)
+    # Rework the resume without the offer
+    resume_formatted = formatters.resume_formatter(resume)
     logging.info(f"\n\n{dashes} resume_formatted: {dashes}\n{resume_formatted}\n\n")
 
     if offer:
-        # Align the formatted resume with the offer
-        resume_formatted_aligned = formatters.resume_formatter_by_chunks(
-            resume, offer=offer
-        )
+        # Rework the resume with the offer
+        resume_formatted_aligned = formatters.resume_formatter(resume, offer=offer)
         logging.info(
             f"\n\n{dashes} resume_formatted_aligned: {dashes}\n{resume_formatted_aligned}\n\n"
         )
 
-        # Cover letter
         cover_letter = writers.cover_letter_writer(resume_formatted_aligned, offer.raw)
         logging.info(f"\n\n{dashes} cover_letter: {dashes}\n{cover_letter}\n\n")
 
-        # Strengths and Weaknesses
         strengths_weaknesses = writers.strengths_weaknesses_writer(
             resume_formatted, offer.raw
         )
