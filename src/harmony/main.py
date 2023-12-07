@@ -38,8 +38,6 @@ if __name__ == "__main__":
     resume = parsers.resume_parser(resume_file_content)
     logging.info(f"\n\n{dashes} resume: {dashes}\n{resume}\n\n")
 
-    exit(1)
-
     offer = None
     if args.offer:
         offer_file_content = parse_file(args.offer)

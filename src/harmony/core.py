@@ -2,43 +2,43 @@ from dataclasses import dataclass
 from typing import List
 from dataclasses import field
 from pydantic import BaseModel, Field
-from instructor import openai_schema, openai_function
+from instructor import openai_function
 
 
 class Position(BaseModel):
     """A candidate job position"""
 
     job_title: str = Field(
-        description="The job title held at the company",
+        description="The job title held at the company.",
         examples=["Software Engineer"],
     )
     company_name: str = Field(
-        description="The name of the company",
+        description="The name of the company.",
         examples=["Google"],
     )
     company_location: str = Field(
-        description="The city and country where the company is located",
+        description="The city and country where the company is located.",
         examples=["Paris, France"],
     )
     start_date: str = Field(
-        description="Start date for the position",
+        description="Start date for the position.",
         examples=["2019"],
     )
     end_date: str = Field(
-        description="End date for the position",
+        description="End date for the position.",
         examples=["2019"],
     )
     tasks: list[str] = Field(
-        description="Responsibilities or achievements accomplished in this position",
+        description="Responsibilities or achievements accomplished in this position.",
     )
     skills: List[str] = Field(
         default_factory=list,
-        description="Skills utilized or gained during this job",
+        description="Skills utilized or gained during this position.",
         examples=["Project management", "Career development"],
     )
     tools: List[str] = Field(
         default_factory=list,
-        description="Tools, software stack, or programming languages used in this role",
+        description="Tools, software stack, or programming languages used during the position.",
         examples=["AWS", "Python"],
     )
 
@@ -59,30 +59,29 @@ class Position(BaseModel):
 
 
 class PositionsExtractor(BaseModel):
-    """Extract the candidate's job positions from the text"""
+    """Extract the candidate's job positions from the text."""
 
-    positions: List[Position]
+    positions: List[Position] = Field(..., description="The extracted positions.")
 
 
 @openai_function
 def parse_positions(
     positions: List[Position],
 ):
-    """Extract the candidate's job positions from the text"""
+    """Extract the candidate's job positions from the text."""
 
 
 class Resume(BaseModel):
     """A candidate's resume"""
 
-    raw: str = Field(default_factory=str, exclude=True)
     summary: str = Field(
-        default_factory=str, description="The summary of the candidate"
+        default_factory=str, description="The summary of the candidate."
     )
     skills: List[str] = Field(
-        default_factory=list, description="The skills of the candidate"
+        default_factory=list, description="The skills of the candidate."
     )
     positions: List[Position] = Field(
-        ..., default_factory=list, description="The positions of the candidate"
+        ..., default_factory=list, description="The positions of the candidate."
     )
 
     def __str__(self) -> str:
@@ -102,9 +101,9 @@ class Resume(BaseModel):
 
 
 class ResumeExtractor(BaseModel):
-    """Extract the candidate's resume from the text"""
+    """Extract the candidate's resume from the text."""
 
-    resume: Resume
+    resume: Resume = Field(..., description="The extracted resume.")
 
 
 @dataclass

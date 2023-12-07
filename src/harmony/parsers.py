@@ -7,8 +7,7 @@ from harmony.core import Position, Resume, Offer, PositionsExtractor, ResumeExtr
 
 load_dotenv()
 
-# default_model = "gpt-3.5-turbo-1106"
-default_model = "gpt-3.5-turbo-16k-0613"
+default_model = "gpt-3.5-turbo-1106"
 
 
 def positions_parser(raw: str) -> list[Position]:
@@ -41,9 +40,8 @@ def resume_parser(raw: str) -> Resume:
         messages=messages,
         response_model=ResumeExtractor,
     )
-    resume = response.resume
-    resume.raw = raw
-    return resume
+    log_usage(response)
+    return response.resume
 
 
 def offer_parser(raw: str) -> Offer:
