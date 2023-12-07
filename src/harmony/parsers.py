@@ -7,7 +7,7 @@ from harmony.core import Position, Resume, Offer, PositionsExtractor, ResumeExtr
 
 load_dotenv()
 
-default_model = "gpt-3.5-turbo-1106"
+default_model = "gpt-3.5-turbo-16k-0613"
 
 
 def positions_parser(raw: str) -> list[Position]:
