@@ -10,11 +10,11 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 default_model = "gpt-4-1106-preview"
 
 cover_letter_system_message = (
-    resource_stream(__name__, "data/system_cover_letter.md").read().decode("utf-8")
+    resource_stream(__name__, "system/cover_letter_writer.md").read().decode("utf-8")
 )
 
 strengths_weaknesses_system_message = (
-    resource_stream(__name__, "data/system_strengths_weaknesses.md")
+    resource_stream(__name__, "system/strengths_weaknesses_writer.md")
     .read()
     .decode("utf-8")
 )
@@ -22,7 +22,7 @@ strengths_weaknesses_system_message = (
 
 def cover_letter_writer(resume: str, offer: str) -> str:
     sys_message = cover_letter_system_message
-    user_message = f"# RESUME\n\n{resume}\n\n# OFFER\n\n{offer}"
+    user_message = f"<resume>\n{resume}\n</resume>\n\n<offer>{offer}</offer>"
     messages = [
         {"role": "system", "content": sys_message},
         {"role": "user", "content": user_message},

@@ -3,14 +3,14 @@ from dotenv import load_dotenv
 import logging
 from openai import OpenAI
 from harmony.utils import num_tokens_from_messages, calculate_cost
-from harmony.core import Position, Resume, Offer, PositionsExtractor, ResumeExtractor
+from harmony.core import Position, Resume, Offer, ExperienceExtractor, ResumeExtractor
 
 load_dotenv()
 
 default_model = "gpt-3.5-turbo-16k-0613"
 
 
-def positions_parser(raw: str) -> list[Position]:
+def experience_parser(raw: str) -> list[Position]:
     messages = [
         {"role": "user", "content": f"{raw}"},
     ]
@@ -21,7 +21,7 @@ def positions_parser(raw: str) -> list[Position]:
     response = client.chat.completions.create(
         model=default_model,
         messages=messages,
-        response_model=PositionsExtractor,
+        response_model=ExperienceExtractor,
     )
     log_usage(response)
     return response.positions

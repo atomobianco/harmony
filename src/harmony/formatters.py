@@ -14,15 +14,17 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 default_model = "gpt-4-1106-preview"
 
 position_system_message = (
-    resource_stream(__name__, "data/system_position.md").read().decode("utf-8")
+    resource_stream(__name__, "system/position_formatter.md").read().decode("utf-8")
 )
 
 position_aligned_system_message = (
-    resource_stream(__name__, "data/system_position_aligned.md").read().decode("utf-8")
+    resource_stream(__name__, "system/position_aligned_formatter.md")
+    .read()
+    .decode("utf-8")
 )
 
 skills_system_message = (
-    resource_stream(__name__, "data/system_skills.md").read().decode("utf-8")
+    resource_stream(__name__, "system/skills_formatter.md").read().decode("utf-8")
 )
 
 
