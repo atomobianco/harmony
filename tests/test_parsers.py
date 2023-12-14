@@ -4,11 +4,6 @@ import pytest
 
 
 @pytest.fixture()
-def experience_raw():
-    return parse_file("./tests/resources/experience.md")
-
-
-@pytest.fixture()
 def resume_raw():
     return parse_file("./tests/resources/resume.md")
 
@@ -16,17 +11,6 @@ def resume_raw():
 @pytest.fixture()
 def resume_parsed(resume_raw):
     return parsers.resume_parser(resume_raw)
-
-
-def test_experience_parser(experience_parsed):
-    assert len(experience_parsed) == 1
-    assert len(experience_parsed[0].tasks) == 3
-    assert experience_parsed[0].start_date == "2016"
-    assert experience_parsed[0].end_date == "2019"
-
-
-def test_experience_parser_from_resume(experience_parsed_from_resume):
-    assert len(experience_parsed_from_resume) == 2
 
 
 def test_resume_parser(resume_parsed):
@@ -52,7 +36,7 @@ def test_resume_parser_experience(resume_parsed):
     experience_two = experience[1]
     assert experience_two.job_title == "Software Engineer"
     assert experience_two.company_name == "ABC Solutions"
-    assert experience_one.start_date == "2016"
-    assert len(experience_one.tasks) == 3
+    assert experience_two.start_date == "2016"
+    assert len(experience_two.tasks) == 3
     assert experience_two.skills == []
     assert experience_two.tools == ["AngularJS"]

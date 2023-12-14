@@ -51,15 +51,18 @@ class Position(BaseModel):
         description="End date for the position.",
     )
     tasks: list[str] = Field(
+        default_factory=list,
         description="Responsibilities or achievements accomplished in this position.",
     )
     skills: List[str] = Field(
         default_factory=list,
-        description="Generic skills and competencies utilized or gained during this position, if detailed (e.g. Project management, Team Leadership).",
+        description="Generic skills and competencies utilized or gained during this position, if detailed \
+        (e.g. Project management, Team Leadership).",
     )
     tools: List[str] = Field(
         default_factory=list,
-        description="Specific tools, software stack, frameworks, programming languages used during the position, if detailed (e.g. AWS, Python).",
+        description="Specific tools, software stack, frameworks, programming languages used during the position, \
+        if detailed (e.g. AWS, Python).",
     )
 
     def __str__(self) -> str:
@@ -86,7 +89,8 @@ class Resume(BaseModel):
         description="Brief summary of the candidate's career and goals.",
     )
     skills: List[str] = Field(
-        default_factory=list, description="List of skills relevant to the job."
+        default_factory=list,
+        description="List of skills the candidate has.",
     )
     certifications: List[str] = Field(
         default_factory=list,
@@ -95,7 +99,7 @@ class Resume(BaseModel):
     experience: List[Position] = Field(
         ...,
         default_factory=list,
-        description="List of previous employments.",
+        description="List of previous employments, that is, job positions held by the candidate.",
     )
     education: List[Diploma] = Field(
         default_factory=list,
@@ -125,7 +129,7 @@ class Resume(BaseModel):
                 if type(self.certifications) is list
                 else self.certifications
             )
-            resume_str += f"\n\n## Skills\n\n{certifications_str}"
+            resume_str += f"\n\n## Certifications\n\n{certifications_str}"
 
         return resume_str
 
@@ -137,13 +141,13 @@ class ResumeExtractor(BaseModel):
 
 
 @openai_function
-def parse_resume(resume: Resume = Field(..., description="The extracted resume.")):
-    """Extract the candidate's job positions from the text."""
+def parse_resume(resume: Resume = Field(..., description="The candidate's resume.")):
+    """Extract the candidate's resume from the text."""
 
 
 @dataclass
 class Offer:
-    """An offer of a job position."""
+    """An offer for a job position."""
 
     raw: str = field(default_factory=str)
 
