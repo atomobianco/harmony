@@ -3,28 +3,11 @@ from dotenv import load_dotenv
 import logging
 from openai import OpenAI
 from harmony.utils import num_tokens_from_messages, calculate_cost
-from harmony.core import Position, Resume, Offer, ExperienceExtractor, ResumeExtractor
+from harmony.core import Resume, Offer, ResumeExtractor
 
 load_dotenv()
 
 default_model = "gpt-3.5-turbo-16k-0613"
-
-
-def experience_parser(raw: str) -> list[Position]:
-    messages = [
-        {"role": "user", "content": f"{raw}"},
-    ]
-    logging.info(
-        f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
-    )
-    client = instructor.patch(OpenAI())
-    response = client.chat.completions.create(
-        model=default_model,
-        messages=messages,
-        response_model=ExperienceExtractor,
-    )
-    log_usage(response)
-    return response.positions
 
 
 def resume_parser(raw: str) -> Resume:
@@ -38,6 +21,7 @@ def resume_parser(raw: str) -> Resume:
     response = client.chat.completions.create(
         model=default_model,
         messages=messages,
+        temperature=0.0,
         response_model=ResumeExtractor,
     )
     log_usage(response)

@@ -18,6 +18,8 @@ position_2 = Position(
     tasks=["Develop code", "Manage engineers"],
 )
 
+resume = Resume(summary="The summary", experience=[position_1, position_2])
+
 
 def test_position_str():
     position_str = str(position_1)
@@ -28,7 +30,6 @@ def test_position_str():
 
 
 def test_resume_str():
-    resume = Resume(summary="The summary", positions=[position_1, position_2])
     resume_str = str(resume)
     expected = (
         "## Summary\n\nThe summary\n\n"

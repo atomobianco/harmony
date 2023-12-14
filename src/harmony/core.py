@@ -9,24 +9,19 @@ class Diploma(BaseModel):
     """Educational background, including schools attended and degrees earned."""
 
     title: str = Field(
-        description="The title of the diploma obtained.",
-        examples=["Ph.D. in Computer Science"],
+        description="The title of the diploma obtained (e.g. Ph.D. in Computer Science).",
     )
     school: str = Field(
-        description="The name of the school.",
-        examples=["MIT"],
+        description="The name of the school (e.g. MIT).",
     )
     location: str = Field(
-        description="The city and country where the school is located.",
-        examples=["Cambridge, MA"],
+        description="The city and country where the school is located (e.g. Cambridge, MA).",
     )
     start_date: str = Field(
         description="Start date for the diploma.",
-        examples=["2019"],
     )
     end_date: str = Field(
         description="End date for the diploma.",
-        examples=["2019"],
     )
 
     def __str__(self) -> str:
@@ -41,37 +36,30 @@ class Position(BaseModel):
     """Previous employment."""
 
     job_title: str = Field(
-        description="The job title held at the company.",
-        examples=["Software Engineer"],
+        description="The job title held at the company (e.g. Software Engineer).",
     )
     company_name: str = Field(
-        description="The name of the company.",
-        examples=["Google"],
+        description="The name of the company (e.g. Google).",
     )
     company_location: str = Field(
-        description="The city and country where the company is located.",
-        examples=["Paris, France"],
+        description="The city and country where the company is located (e.g. Paris, France).",
     )
     start_date: str = Field(
         description="Start date for the position.",
-        examples=["2019"],
     )
     end_date: str = Field(
         description="End date for the position.",
-        examples=["2019"],
     )
     tasks: list[str] = Field(
         description="Responsibilities or achievements accomplished in this position.",
     )
     skills: List[str] = Field(
         default_factory=list,
-        description="Skills utilized or gained during this position, if detailed.",
-        examples=["Project management", "Career development"],
+        description="Generic skills and competencies utilized or gained during this position, if detailed (e.g. Project management, Team Leadership).",
     )
     tools: List[str] = Field(
         default_factory=list,
-        description="Tools, software stack, or programming languages used during the position, if detailed.",
-        examples=["AWS", "Python"],
+        description="Specific tools, software stack, frameworks, programming languages used during the position, if detailed (e.g. AWS, Python).",
     )
 
     def __str__(self) -> str:
@@ -88,21 +76,6 @@ class Position(BaseModel):
         if tools_str:
             position_str += f"\n\nTools: {tools_str}"
         return position_str
-
-
-class ExperienceExtractor(BaseModel):
-    """Extract the candidate's experience in terms of job positions."""
-
-    positions: List[Position] = Field(
-        ..., description="The job positions listed in the experience of the candidate."
-    )
-
-
-@openai_function
-def parse_experience(
-    positions: List[Position] = Field(..., description="The extracted positions."),
-):
-    """Extract the candidate's experience in terms of job positions."""
 
 
 class Resume(BaseModel):

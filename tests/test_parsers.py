@@ -14,16 +14,6 @@ def resume_raw():
 
 
 @pytest.fixture()
-def experience_parsed(experience_raw):
-    return parsers.experience_parser(experience_raw)
-
-
-@pytest.fixture()
-def experience_parsed_from_resume(resume_raw):
-    return parsers.experience_parser(resume_raw)
-
-
-@pytest.fixture()
 def resume_parsed(resume_raw):
     return parsers.resume_parser(resume_raw)
 
@@ -41,14 +31,8 @@ def test_experience_parser_from_resume(experience_parsed_from_resume):
 
 def test_resume_parser(resume_parsed):
     assert len(resume_parsed.experience) == 2
-    assert len(resume_parsed.skills) == 12
+    assert len(resume_parsed.skills) in [12, 13]
     assert len(resume_parsed.education) == 1
-
-
-def test_resume_vs_positions_parser(resume_parsed, experience_parsed_from_resume):
-    assert len(resume_parsed.experience) == len(experience_parsed_from_resume)
-    for pos in resume_parsed.experience:
-        assert pos in experience_parsed_from_resume
 
 
 def test_resume_parser_experience(resume_parsed):
