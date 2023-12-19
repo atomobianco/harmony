@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from harmony.core import Resume, Offer
+from harmony.core import Resume
 from openai import OpenAI
 import os
 from pkg_resources import resource_stream
@@ -20,7 +20,7 @@ strengths_weaknesses_system_message = (
 )
 
 
-def cover_letter_writer(resume: str, offer: str) -> str:
+def cover_letter_writer(resume: str | Resume, offer: str) -> str:
     sys_message = cover_letter_system_message
     user_message = f"<resume>\n{resume}\n</resume>\n\n<offer>{offer}</offer>"
     messages = [
@@ -36,7 +36,7 @@ def cover_letter_writer(resume: str, offer: str) -> str:
     return result
 
 
-def strengths_weaknesses_writer(resume: str, offer: str) -> str:
+def strengths_weaknesses_writer(resume: str | Resume, offer: str) -> str:
     sys_message = strengths_weaknesses_system_message
     user_message = f"# RESUME\n\n{resume}\n\n# OFFER\n\n{offer}"
     messages = [

@@ -6,63 +6,67 @@ import harmony.parsers as parsers
 import harmony.formatters as formatters
 import harmony.writers as writers
 from harmony.utils import parse_file
+from rich.console import Console
 
-if __name__ == "__main__":
-    dashes = "-" * 40
-    ts = datetime.now().strftime("%Y-%m-%dT%Hh%Mm")
-    uid = str(uuid.uuid4())[:8]
 
+def build_args():
     parser = argparse.ArgumentParser(description="Harmony Resume Parser")
     parser.add_argument("--resume", help="resume file to parse", required=False)
     parser.add_argument("--offer", help="offer file to parse", required=False)
-    parser.add_argument(
-        "--console", help="log to console", required=False, action="store_true"
-    )
+    _args = parser.parse_args()
+    if not _args.resume:
+        _args.resume = "./tests/resources/resume.md"
+    if not _args.offer:
+        _args.offer = "./tests/resources/offer.md"
+    return _args
 
-    args = parser.parse_args()
-    if not args.resume:
-        args.resume = "./tests/resources/resume.md"
-    if not args.offer:
-        args.offer = "./tests/resources/offer.md"
-    if args.console:
-        logging.basicConfig(level=logging.INFO)
-    else:
-        logging.basicConfig(level=logging.INFO, filename=f"logs/harmony_{ts}_{uid}.log")
-    logging.info("Started")
 
-    resume_file_content = parse_file(args.resume)
-    logging.info(
-        f"\n\n{dashes} resume_file_content: {dashes}\n{resume_file_content}\n\n"
-    )
+def log_info(content: str, heading: str, console: Console):
+    dashes = "-" * 40
+    logging.info(f"\n\n{dashes} {heading}: {dashes}\n{content}\n\n")
+    console.rule(f"[bold]{heading}")
+    console.print(content, end="\n\n")
 
-    resume = parsers.resume_parser(resume_file_content)
-    logging.info(f"\n\n{dashes} resume: {dashes}\n{resume}\n\n")
 
-    exit(0)
+if __name__ == "__main__":
+    ts = datetime.now().strftime("%Y-%m-%dT%Hh%Mm")
+    uid = str(uuid.uuid4())[:8]
+    logging.basicConfig(level=logging.INFO, filename=f"logs/harmony_{ts}_{uid}.log")
+    console = Console()
+    args = build_args()
 
     offer = None
     if args.offer:
         offer_file_content = parse_file(args.offer)
         offer = parsers.offer_parser(offer_file_content)
-        logging.info(f"\n\n{dashes} offer: {dashes}\n{offer}\n\n")
+        log_info(str(offer), "OFFER", console)
 
-    # Rework the resume without the offer
-    resume_formatted = formatters.resume_formatter(resume)
-    logging.info(f"\n\n{dashes} resume_formatted: {dashes}\n{resume_formatted}\n\n")
+    resume_original = parse_file(args.resume)
+    log_info(resume_original, "RESUME (ORIGINAL)", console)
+
+    with console.status("Parsing the resume..."):
+        resume = parsers.resume_parser(resume_original)
+        log_info(str(resume), "RESUME (PARSED)", console)
+
+    # Format the resume alone
+    with console.status("Formatting the resume..."):
+        resume_formatted = formatters.resume_formatter(resume)
+        log_info(resume_formatted, "RESUME (FORMATTED)", console)
+
+    exit()
 
     if offer:
-        # Rework the resume with the offer
-        resume_formatted_aligned = formatters.resume_formatter(resume, offer=offer)
-        logging.info(
-            f"\n\n{dashes} resume_formatted_aligned: {dashes}\n{resume_formatted_aligned}\n\n"
-        )
+        # Format the resume with the offer
+        with console.status("Formatting the resume with the offer..."):
+            resume_formatted_aligned = formatters.resume_formatter(resume, offer=offer)
+            log_info(resume_formatted_aligned, "RESUME (FORMATTED, ALIGNED)", console)
 
-        cover_letter = writers.cover_letter_writer(resume_formatted_aligned, offer.raw)
-        logging.info(f"\n\n{dashes} cover_letter: {dashes}\n{cover_letter}\n\n")
+        with console.status("Writing the cover letter..."):
+            cover_letter = writers.cover_letter_writer(resume, offer.raw)
+            log_info(cover_letter, "COVER LETTER", console)
 
-        strengths_weaknesses = writers.strengths_weaknesses_writer(
-            resume_formatted, offer.raw
-        )
-        logging.info(
-            f"\n\n{dashes} strengths_weaknesses: {dashes}\n{strengths_weaknesses}\n\n"
-        )
+        with console.status("Writing the strengths and weaknesses..."):
+            strengths_weaknesses = writers.strengths_weaknesses_writer(
+                resume, offer.raw
+            )
+            log_info(strengths_weaknesses, "STRENGTHS AND WEAKNESSES", console)

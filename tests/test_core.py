@@ -18,7 +18,13 @@ position_2 = Position(
     tasks=["Develop code", "Manage engineers"],
 )
 
-resume = Resume(summary="The summary", experience=[position_1, position_2])
+certifications = ["Scrum master academy", "Software engineering academy"]
+
+resume = Resume(
+    summary="The summary",
+    experience=[position_1, position_2],
+    certifications=certifications,
+)
 
 
 def test_position_str():
@@ -38,6 +44,9 @@ def test_resume_str():
         "- Develop code\n\n"
         "### Software Manager, Google\n\n2020 - 2021, Paris, France\n\n"
         "- Develop code\n"
-        "- Manage engineers"
+        "- Manage engineers\n\n"
+        "## Certifications\n\n"
+        "- Scrum master academy\n"
+        "- Software engineering academy"
     )
     assert resume_str == expected

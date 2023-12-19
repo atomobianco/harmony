@@ -110,13 +110,13 @@ def resume_formatter(
     resume_copy = copy.deepcopy(resume)
 
     # Rework the positions one by one
-    resume_copy.positions = [
-        position_formatter(pos, model, offer) for pos in resume.positions
+    resume_copy.experience = [
+        position_formatter(pos, model, offer) for pos in resume.experience
     ]
 
     # Rework the skills
     all_skills = resume.skills + [
-        skill for position in resume.positions for skill in position.skills
+        skill for position in resume.experience for skill in position.skills
     ]
     resume_copy.skills = [
         skill.strip() for skill in skills_formatter(", ".join(all_skills)).split(",")

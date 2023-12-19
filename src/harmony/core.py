@@ -27,7 +27,7 @@ class Diploma(BaseModel):
     def __str__(self) -> str:
         diploma_str = (
             f"### {self.title}\n\n"
-            f"{self.start_date} - {self.end_date}, {self.school}, {self.location}\n\n"
+            f"{self.start_date} - {self.end_date}, {self.school}, {self.location}"
         )
         return diploma_str
 
@@ -96,6 +96,10 @@ class Resume(BaseModel):
         default_factory=list,
         description="Any relevant certifications or licenses held by the candidate.",
     )
+    languages: List[str] = Field(
+        default_factory=list,
+        description="The language and level the candidate is able to speak.",
+    )
     experience: List[Position] = Field(
         ...,
         default_factory=list,
@@ -124,12 +128,11 @@ class Resume(BaseModel):
             education_str = f"## Education\n\n{diplomas_str}"
             resume_str += f"\n\n{education_str}"
         if self.certifications:
-            certifications_str = (
-                ", ".join(self.certifications)
-                if type(self.certifications) is list
-                else self.certifications
-            )
-            resume_str += f"\n\n## Certifications\n\n{certifications_str}"
+            certs_str = "\n".join([f"- {cert}" for cert in self.certifications])
+            resume_str += f"\n\n## Certifications\n\n{certs_str}"
+        if self.languages:
+            languages_str = "\n".join([f"- {cert}" for cert in self.languages])
+            resume_str += f"\n\n## Languages\n\n{languages_str}"
 
         return resume_str
 
