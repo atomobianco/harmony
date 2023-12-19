@@ -106,7 +106,6 @@ def skills_formatter(skills: str, model: str = "gpt-3.5-turbo-0613") -> str:
 def resume_formatter(
     resume: Resume, model: str = default_model, offer: Offer = None
 ) -> str:
-    """Format a resume by chunks."""
     resume_copy = copy.deepcopy(resume)
 
     # Rework the positions one by one

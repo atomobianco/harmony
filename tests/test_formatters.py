@@ -2,12 +2,6 @@ from harmony.utils import parse_file
 import harmony.formatters as formatters
 
 
-def test_position_formatter():
-    position_raw = parse_file("./tests/resources/experience.md")
-    position_formatted_response = formatters.position_formatter(position_raw)
-    assert position_formatted_response != ""
-
-
 def test_resume_formatter():
     resume_raw = parse_file("./tests/resources/resume.md")
     resume_formatted_response = formatters.position_formatter(resume_raw)

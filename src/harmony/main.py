@@ -53,8 +53,6 @@ if __name__ == "__main__":
         resume_formatted = formatters.resume_formatter(resume)
         log_info(resume_formatted, "RESUME (FORMATTED)", console)
 
-    exit()
-
     if offer:
         # Format the resume with the offer
         with console.status("Formatting the resume with the offer..."):
