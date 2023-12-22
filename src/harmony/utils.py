@@ -1,4 +1,5 @@
 import tiktoken
+import logging
 
 
 def parse_file(file_name):
@@ -99,3 +100,14 @@ def num_tokens_from_messages(messages, model):
                 num_tokens += tokens_per_name
     num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>
     return num_tokens
+
+
+def log_usage(response, model):
+    raw_response = getattr(response, "_raw_response", response)
+    logging.info(
+        f"Tokens usage: "
+        f"{raw_response.usage.prompt_tokens} (prompt), "
+        f"{raw_response.usage.completion_tokens} (completion), "
+        f"{raw_response.usage.total_tokens} (total)"
+    )
+    logging.info(f"Total cost: {calculate_cost(raw_response.usage, model)}")

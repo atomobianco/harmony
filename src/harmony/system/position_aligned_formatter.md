@@ -12,7 +12,7 @@ The user will give you details of:
    - list of tasks performed
    - list of skills utilized or gained
    - list of tools and environments used
-2. a job they are applying for including:
+2. a job offer they are applying for including:
    - job title
    - company name
    - skills required

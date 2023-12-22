@@ -37,7 +37,7 @@ def resume_parser(raw: str) -> Resume:
         temperature=0.0,
         response_model=ResumeExtractor,
     )
-    log_usage(response)
+    log_usage(response, default_model)
     return response.resume
 
 
@@ -45,13 +45,11 @@ def offer_parser(raw: str) -> Offer:
     return Offer(raw=raw)
 
 
-def log_usage(response):
+def log_usage(response, model):
     logging.info(
         f"Tokens usage: "
         f"{response._raw_response.usage.prompt_tokens} (prompt), "
         f"{response._raw_response.usage.completion_tokens} (completion), "
         f"{response._raw_response.usage.total_tokens} (total)"
     )
-    logging.info(
-        f"Total cost: {calculate_cost(response._raw_response.usage, default_model)}"
-    )
+    logging.info(f"Total cost: {calculate_cost(response._raw_response.usage, model)}")

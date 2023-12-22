@@ -28,14 +28,11 @@ skills_system_message = (
 )
 
 
-def position_formatter(
-    position: Position, model: str = default_model, offer: Offer = None
-) -> str:
-    """Format a position."""
+def position_formatter(position: Position | str, offer: Offer | str = None) -> str:
     position_str = str(position)
     sys_message = position_aligned_system_message if offer else position_system_message
     user_message = (
-        f"1. Job position:\n\n```{position_str}```\n\n2. Job they are applying for:\n\n```{offer.raw}```"
+        f"<position>\n{position_str}\n<position>\n\n<offer>\n{offer}\n</offer>"
         if offer
         else position_str
     )
@@ -47,7 +44,7 @@ def position_formatter(
         f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
     )
     response = client.chat.completions.create(
-        model=model,
+        model=default_model,
         messages=messages,
         temperature=0.2,
         # Set the temperature to a lower value, such as 0.2, to make the output more deterministic and focused.
@@ -55,10 +52,10 @@ def position_formatter(
         top_p=0.8,
         # Use a moderate value for Top P, such as 0.8. This will allow the model to select from a reasonably broad
         # range of tokens while still maintaining control over the generated text.
-        frequency_penalty=0.5,
+        frequency_penalty=0.8,
         # Increase the frequency penalty to discourage the repetition of words or phrases. A value around 0.5 or
         # higher can help reduce redundancy in the generated content.
-        presence_penalty=0.5,
+        presence_penalty=0.8,
         # Similarly, you can increase the presence penalty to discourage the inclusion of similar words or phrases.
         # A value around 0.5 or higher can encourage the model to provide more varied rephrasing.
     )
@@ -68,7 +65,7 @@ def position_formatter(
         f"{response.usage.completion_tokens} (completion), "
         f"{response.usage.total_tokens} (total)"
     )
-    logging.info(f"Total cost: {calculate_cost(response.usage, model)}")
+    logging.info(f"Total cost: {calculate_cost(response.usage, default_model)}")
 
     response_message = response.choices[0].message
     if response_message.role == "assistant":
@@ -103,14 +100,12 @@ def skills_formatter(skills: str, model: str = "gpt-3.5-turbo-0613") -> str:
     return result
 
 
-def resume_formatter(
-    resume: Resume, model: str = default_model, offer: Offer = None
-) -> str:
+def resume_formatter(resume: Resume, offer: Offer = None) -> str:
     resume_copy = copy.deepcopy(resume)
 
     # Rework the positions one by one
     resume_copy.experience = [
-        position_formatter(pos, model, offer) for pos in resume.experience
+        position_formatter(pos, offer) for pos in resume.experience
     ]
 
     # Rework the skills
