@@ -5,6 +5,7 @@ from datetime import datetime
 import harmony.parsers as parsers
 import harmony.formatters as formatters
 import harmony.writers as writers
+from harmony.core import Resume
 from harmony.utils import parse_file
 from rich.console import Console
 
@@ -41,12 +42,14 @@ if __name__ == "__main__":
         offer = parsers.offer_parser(offer_file_content)
         log_info(str(offer), "OFFER", console)
 
-    resume_original = parse_file(args.resume)
-    log_info(resume_original, "RESUME (ORIGINAL)", console)
-
-    with console.status("Parsing the resume..."):
-        resume = parsers.resume_parser(resume_original)
-        log_info(str(resume), "RESUME (PARSED)", console)
+    if args.resume.endswith(".pkl"):
+        resume = Resume.load(args.resume)
+    else:
+        resume_original = parse_file(args.resume)
+        log_info(resume_original, "RESUME (ORIGINAL)", console)
+        with console.status("Parsing the resume..."):
+            resume = parsers.resume_parser(resume_original)
+    log_info(str(resume), "RESUME (PARSED)", console)
 
     # Format the resume alone
     with console.status("Formatting the resume..."):

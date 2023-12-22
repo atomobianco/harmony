@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 from dataclasses import field
+import pickle
 from pydantic import BaseModel, Field
 from instructor import openai_function
 
@@ -135,6 +136,15 @@ class Resume(BaseModel):
             resume_str += f"\n\n## Languages\n\n{languages_str}"
 
         return resume_str
+
+    def save(self, path: str):
+        with open(path, "wb") as f:
+            pickle.dump(self, f)
+
+    @staticmethod
+    def load(path: str):
+        with open(path, "rb") as f:
+            return pickle.load(f)
 
 
 class ResumeExtractor(BaseModel):
