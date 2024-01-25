@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 import copy
 import logging
-from harmony.utils import num_tokens_from_messages, calculate_cost
+from harmony.utils import num_tokens_from_messages, calculate_cost, log_usage
 from pkg_resources import resource_stream
 
 load_dotenv()
@@ -46,7 +46,7 @@ def position_formatter(position: Position | str, offer: Offer | str = None) -> s
     response = client.chat.completions.create(
         model=default_model,
         messages=messages,
-        temperature=0.2,
+        temperature=0.0,
         # Set the temperature to a lower value, such as 0.2, to make the output more deterministic and focused.
         # This will help ensure that the generated text is concise and less prone to randomness.
         top_p=0.8,
@@ -59,13 +59,7 @@ def position_formatter(position: Position | str, offer: Offer | str = None) -> s
         # Similarly, you can increase the presence penalty to discourage the inclusion of similar words or phrases.
         # A value around 0.5 or higher can encourage the model to provide more varied rephrasing.
     )
-    logging.info(
-        f"Tokens usage: "
-        f"{response.usage.prompt_tokens} (prompt), "
-        f"{response.usage.completion_tokens} (completion), "
-        f"{response.usage.total_tokens} (total)"
-    )
-    logging.info(f"Total cost: {calculate_cost(response.usage, default_model)}")
+    log_usage(response, default_model)
 
     response_message = response.choices[0].message
     if response_message.role == "assistant":
@@ -84,13 +78,7 @@ def skills_formatter(skills: str, model: str = "gpt-3.5-turbo-0613") -> str:
         f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
     )
     response = client.chat.completions.create(model=model, messages=messages)
-    logging.info(
-        f"Tokens usage: "
-        f"{response.usage.prompt_tokens} (prompt), "
-        f"{response.usage.completion_tokens} (completion), "
-        f"{response.usage.total_tokens} (total)"
-    )
-    logging.info(f"Total cost: {calculate_cost(response.usage, model)}")
+    log_usage(response, model)
 
     response_message = response.choices[0].message
     if response_message.role == "assistant":

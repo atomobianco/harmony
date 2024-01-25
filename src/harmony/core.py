@@ -3,7 +3,6 @@ from typing import List
 from dataclasses import field
 import pickle
 from pydantic import BaseModel, Field
-from instructor import openai_function
 
 
 class Diploma(BaseModel):
@@ -68,15 +67,16 @@ class Position(BaseModel):
 
     def __str__(self) -> str:
         tasks_str = "\n".join([f"- {task}" for task in self.tasks])
-        skills_str = ", ".join([f"{skill}" for skill in self.skills])
-        tools_str = ", ".join([f"{tool}" for tool in self.tools])
         position_str = (
             f"### {self.job_title}, {self.company_name}\n\n"
             f"{self.start_date} - {self.end_date}, {self.company_location}\n\n"
             f"{tasks_str}"
         )
+        skills_str = ", ".join([f"{skill}" for skill in self.skills])
         if skills_str:
             position_str += f"\n\nSkills: {skills_str}"
+
+        tools_str = ", ".join([f"{tool}" for tool in self.tools])
         if tools_str:
             position_str += f"\n\nTools: {tools_str}"
         return position_str
@@ -151,11 +151,6 @@ class ResumeExtractor(BaseModel):
     """Extract the candidate's resume from the text."""
 
     resume: Resume = Field(..., description="The candidate's resume.")
-
-
-@openai_function
-def parse_resume(resume: Resume = Field(..., description="The candidate's resume.")):
-    """Extract the candidate's resume from the text."""
 
 
 @dataclass

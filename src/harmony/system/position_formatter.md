@@ -37,6 +37,7 @@ An optimized version of the job position description.
 ## INPUT
 ```
 ### Software Engineer, ABC Solutions
+
 2017 - 2023, Paris, FR
 
 - Developed and maintained web applications using Spring Boot and Nuxt.
@@ -48,6 +49,7 @@ An optimized version of the job position description.
 ## OUTPUT
 ```
 ### Software Engineer, ABC Solutions
+
 2017 - 2023, Paris, FR
 
 - Developed and maintained web applications.

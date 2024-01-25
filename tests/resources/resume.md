@@ -30,6 +30,8 @@ Highly skilled software engineer with 5 years of experience in full-stack web de
 - Designed and implemented RESTful APIs to integrate external systems and improve overall system performance.
 - Collaborated with cross-functional teams to gather requirements, plan projects, and ensure timely delivery of high-quality software.
 
+Stack: Python
+
 ### Software Engineer, ABC Solutions
 
 2016 - 2019

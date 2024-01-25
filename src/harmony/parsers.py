@@ -2,7 +2,7 @@ import instructor
 from dotenv import load_dotenv
 import logging
 from openai import OpenAI
-from harmony.utils import num_tokens_from_messages, calculate_cost
+from harmony.utils import num_tokens_from_messages, calculate_cost, log_usage
 from harmony.core import Resume, Offer, ResumeExtractor
 
 load_dotenv()
@@ -43,13 +43,3 @@ def resume_parser(raw: str) -> Resume:
 
 def offer_parser(raw: str) -> Offer:
     return Offer(raw=raw)
-
-
-def log_usage(response, model):
-    logging.info(
-        f"Tokens usage: "
-        f"{response._raw_response.usage.prompt_tokens} (prompt), "
-        f"{response._raw_response.usage.completion_tokens} (completion), "
-        f"{response._raw_response.usage.total_tokens} (total)"
-    )
-    logging.info(f"Total cost: {calculate_cost(response._raw_response.usage, model)}")

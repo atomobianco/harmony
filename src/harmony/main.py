@@ -12,13 +12,9 @@ from rich.console import Console
 
 def build_args():
     parser = argparse.ArgumentParser(description="Harmony Resume Parser")
-    parser.add_argument("--resume", help="resume file to parse", required=False)
+    parser.add_argument("--resume", help="resume file to parse", required=True)
     parser.add_argument("--offer", help="offer file to parse", required=False)
     _args = parser.parse_args()
-    if not _args.resume:
-        _args.resume = "./tests/resources/resume.md"
-    if not _args.offer:
-        _args.offer = "./tests/resources/offer.md"
     return _args
 
 
@@ -42,7 +38,7 @@ if __name__ == "__main__":
         offer = parsers.offer_parser(offer_file_content)
         log_info(str(offer), "OFFER", console)
 
-    if args.resume.endswith(".pkl"):
+    if args.resume and args.resume.endswith(".pkl"):
         resume = Resume.load(args.resume)
     else:
         resume_original = parse_file(args.resume)

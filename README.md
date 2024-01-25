@@ -18,5 +18,5 @@ Position: occupied at time t. It has a title, a description, a duration, a list 
 Result: A description of what was done.
 
 ```bash
-python src/harmony/main.py --console --resume /mnt/TARANIS/myCV/resume.md --offer tests/resources/offer_mirakl.md
+python src/harmony/main.py --resume ./resume.md --offer ./offer.md
 ```
