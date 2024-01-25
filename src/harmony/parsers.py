@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import logging
 from openai import OpenAI
 from harmony.utils import num_tokens_from_messages, log_usage, read_sys_msg
-from harmony.core import Resume, Offer, ResumeExtractor
+from harmony.core import Resume, Offer
 
 load_dotenv()
 
@@ -25,10 +25,10 @@ def resume_parser(raw: str) -> Resume:
         model=default_model,
         messages=messages,
         temperature=0.0,
-        response_model=ResumeExtractor,
+        response_model=Resume,
     )
     log_usage(response, default_model)
-    return response.resume
+    return response
 
 
 def offer_parser(raw: str) -> Offer:

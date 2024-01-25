@@ -147,12 +147,6 @@ class Resume(BaseModel):
             return pickle.load(f)
 
 
-class ResumeExtractor(BaseModel):
-    """Extract the candidate's resume from the text."""
-
-    resume: Resume = Field(..., description="The candidate's resume.")
-
-
 @dataclass
 class Offer:
     """An offer for a job position."""
