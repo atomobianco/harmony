@@ -2,29 +2,20 @@ import instructor
 from dotenv import load_dotenv
 import logging
 from openai import OpenAI
-from harmony.utils import num_tokens_from_messages, calculate_cost, log_usage
+from harmony.utils import num_tokens_from_messages, log_usage
 from harmony.core import Resume, Offer, ResumeExtractor
+from pkg_resources import resource_stream
 
 load_dotenv()
 
 default_model = "gpt-3.5-turbo-16k-0613"
 
-system_message = """# MISSION
-Your mission is to extract structured information from text.
-
-# INPUT
-The USER might give you structured or unstructured content.
-In the case of structured content, leverage the existing structure to help you with the extraction.
-
-# RULES
-- Extract the content as is, without rephrasing it. 
-- Don't make assumptions about what default values to plug into functions.
-"""
+sys_msg = resource_stream(__name__, "system/resume_parser.md").read().decode("utf-8")
 
 
 def resume_parser(raw: str) -> Resume:
     messages = [
-        {"role": "system", "content": system_message},
+        {"role": "system", "content": sys_msg},
         {"role": "user", "content": f"{raw}"},
     ]
     logging.info(

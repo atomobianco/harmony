@@ -4,41 +4,40 @@ from dotenv import load_dotenv
 import os
 import copy
 import logging
-from harmony.utils import num_tokens_from_messages, calculate_cost, log_usage
+from harmony.utils import num_tokens_from_messages, log_usage
 from pkg_resources import resource_stream
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-
 default_model = "gpt-4-1106-preview"
 
-position_system_message = (
+sys_msg_position = (
     resource_stream(__name__, "system/position_formatter.md").read().decode("utf-8")
 )
 
-position_aligned_system_message = (
+sys_msg_position_aligned = (
     resource_stream(__name__, "system/position_aligned_formatter.md")
     .read()
     .decode("utf-8")
 )
 
-skills_system_message = (
+sys_msg_skills = (
     resource_stream(__name__, "system/skills_formatter.md").read().decode("utf-8")
 )
 
 
 def position_formatter(position: Position | str, offer: Offer | str = None) -> str:
     position_str = str(position)
-    sys_message = position_aligned_system_message if offer else position_system_message
-    user_message = (
+    sys_msg = sys_msg_position_aligned if offer else sys_msg_position
+    user_msg = (
         f"<position>\n{position_str}\n<position>\n\n<offer>\n{offer}\n</offer>"
         if offer
         else position_str
     )
     messages = [
-        {"role": "system", "content": sys_message},
-        {"role": "user", "content": user_message},
+        {"role": "system", "content": sys_msg},
+        {"role": "user", "content": user_msg},
     ]
     logging.info(
         f"Tokens messages: {num_tokens_from_messages(messages, default_model)}"
@@ -71,7 +70,7 @@ def position_formatter(position: Position | str, offer: Offer | str = None) -> s
 
 def skills_formatter(skills: str, model: str = "gpt-3.5-turbo-0613") -> str:
     messages = [
-        {"role": "system", "content": skills_system_message},
+        {"role": "system", "content": sys_msg_skills},
         {"role": "user", "content": skills},
     ]
     logging.info(
