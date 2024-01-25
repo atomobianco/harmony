@@ -30,8 +30,8 @@ def test_resume_parser_experience(resume_parsed):
     assert experience_one.company_name == "XYZ Tech"
     assert experience_one.start_date == "2019"
     assert len(experience_one.tasks) == 3
-    assert experience_one.skills == []
-    assert experience_one.tools == []
+    assert experience_one.skills == ["Project management"]
+    assert experience_one.stack == ["Python"]
 
     experience_two = experience[1]
     assert experience_two.job_title == "Software Engineer"
@@ -39,4 +39,4 @@ def test_resume_parser_experience(resume_parsed):
     assert experience_two.start_date == "2016"
     assert len(experience_two.tasks) == 3
     assert experience_two.skills == []
-    assert experience_two.tools == ["AngularJS"]
+    assert experience_two.stack == ["AngularJS"]

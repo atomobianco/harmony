@@ -54,15 +54,15 @@ class Position(BaseModel):
         default_factory=list,
         description="Responsibilities or achievements accomplished in this position.",
     )
+    stack: List[str] = Field(
+        default_factory=list,
+        description="Specific tools, software stack, frameworks, or programming languages used during the position, \
+        if detailed (e.g. AWS, Python).",
+    )
     skills: List[str] = Field(
         default_factory=list,
         description="Generic skills and competencies utilized or gained during this position, if detailed \
         (e.g. Project management, Team Leadership).",
-    )
-    tools: List[str] = Field(
-        default_factory=list,
-        description="Specific tools, software stack, frameworks, programming languages used during the position, \
-        if detailed (e.g. AWS, Python).",
     )
 
     def __str__(self) -> str:
@@ -76,9 +76,9 @@ class Position(BaseModel):
         if skills_str:
             position_str += f"\n\nSkills: {skills_str}"
 
-        tools_str = ", ".join([f"{tool}" for tool in self.tools])
-        if tools_str:
-            position_str += f"\n\nTools: {tools_str}"
+        stack_str = ", ".join([f"{tool}" for tool in self.stack])
+        if stack_str:
+            position_str += f"\n\nStack: {stack_str}"
         return position_str
 
 

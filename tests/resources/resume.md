@@ -31,6 +31,7 @@ Highly skilled software engineer with 5 years of experience in full-stack web de
 - Collaborated with cross-functional teams to gather requirements, plan projects, and ensure timely delivery of high-quality software.
 
 Stack: Python
+Skills: Project management
 
 ### Software Engineer, ABC Solutions
 
