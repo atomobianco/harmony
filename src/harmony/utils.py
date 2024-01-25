@@ -1,11 +1,17 @@
 import tiktoken
 import logging
+from importlib import resources
 
 
 def parse_file(file_name):
     """Parse file and return a string"""
     with open(file_name, "r") as f:
         return f.read()
+
+
+def read_sys_msg(file_name):
+    """Read system message from file and return a string"""
+    return resources.files(__package__).joinpath(f"system/{file_name}").read_text()
 
 
 def calculate_cost(usage, model):

@@ -4,27 +4,17 @@ from dotenv import load_dotenv
 import os
 import copy
 import logging
-from harmony.utils import num_tokens_from_messages, log_usage
-from pkg_resources import resource_stream
+from harmony.utils import num_tokens_from_messages, log_usage, read_sys_msg
 
 load_dotenv()
+
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 default_model = "gpt-4-1106-preview"
 
-sys_msg_position = (
-    resource_stream(__name__, "system/position_formatter.md").read().decode("utf-8")
-)
-
-sys_msg_position_aligned = (
-    resource_stream(__name__, "system/position_aligned_formatter.md")
-    .read()
-    .decode("utf-8")
-)
-
-sys_msg_skills = (
-    resource_stream(__name__, "system/skills_formatter.md").read().decode("utf-8")
-)
+sys_msg_position = read_sys_msg("position_formatter.md")
+sys_msg_position_aligned = read_sys_msg("position_aligned_formatter.md")
+sys_msg_skills = read_sys_msg("skills_formatter.md")
 
 
 def position_formatter(position: Position | str, offer: Offer | str = None) -> str:

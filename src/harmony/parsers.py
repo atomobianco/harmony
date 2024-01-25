@@ -2,15 +2,14 @@ import instructor
 from dotenv import load_dotenv
 import logging
 from openai import OpenAI
-from harmony.utils import num_tokens_from_messages, log_usage
+from harmony.utils import num_tokens_from_messages, log_usage, read_sys_msg
 from harmony.core import Resume, Offer, ResumeExtractor
-from pkg_resources import resource_stream
 
 load_dotenv()
 
 default_model = "gpt-3.5-turbo-16k-0613"
 
-sys_msg = resource_stream(__name__, "system/resume_parser.md").read().decode("utf-8")
+sys_msg = read_sys_msg("resume_parser.md")
 
 
 def resume_parser(raw: str) -> Resume:
