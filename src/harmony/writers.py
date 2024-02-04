@@ -2,22 +2,14 @@ from dotenv import load_dotenv
 from harmony.core import Resume
 from openai import OpenAI
 import os
-from pkg_resources import resource_stream
+from harmony.utils import read_sys_msg
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 default_model = "gpt-4-1106-preview"
 
-cover_letter_system_message = (
-    resource_stream(__name__, "system/cover_letter_writer.md").read().decode("utf-8")
-)
-
-strengths_weaknesses_system_message = (
-    resource_stream(__name__, "system/strengths_weaknesses_writer.md")
-    .read()
-    .decode("utf-8")
-)
+cover_letter_system_message = read_sys_msg("cover_letter_writer.md")
+strengths_weaknesses_system_message = read_sys_msg("strengths_weaknesses_writer.md")
 
 
 def cover_letter_writer(resume: str | Resume, offer: str) -> str:
